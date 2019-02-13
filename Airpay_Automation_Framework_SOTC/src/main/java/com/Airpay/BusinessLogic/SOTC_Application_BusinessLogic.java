@@ -83,27 +83,31 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 			throw new Exception("SCOT panel page issue");
 		}
 	}
-		
+	public static String ImageVerify = null; 
+	
 	public void Verify_SCOT_Logo() throws Exception {
 		try{ 
+			
+			 ImageVerify = Excel_Handling.Get_Data(TC_ID, "Image_Name").trim();
+			String Logo = "//img[contains(@src,'"+ImageVerify+"')]";
 			Log.info("Navigating To Payment Page");	
 			Assert.waitForPageToLoad(driver);
 			Thread.sleep(2000);
-			if(Assert.isElementDisplayed(driver, SOTCLogo, "DashBoard" ))
+			if(Assert.isElementDisplayed(driver, Logo, "DashBoard" ))
 			{         	
-				Assert.Verify_Image(driver, SOTCLogo, "SOTC Logo");
-				Assert.isElementDisplayed(driver, SOTCLogo, "SOTC Fav icon");
+				Assert.Verify_Image(driver, Logo, ImageVerify +"Logo");
+				Assert.isElementDisplayed(driver, Logo, ImageVerify +"Fav icon");
 				Extent_Reporting.Log_report_img("Respective Details is exist", "Passed", driver);
 			}else{
-				Extent_Reporting.Log_Fail("SOTC Logo  page does not exis",	"Failed",driver);
-				Log.error("SOTC Logo page not successfully displayed");
-				throw new Exception("SOTC Logo does not exist displayed");
+				Extent_Reporting.Log_Fail(ImageVerify +"Logo  page does not exis",	"Failed",driver);
+				Log.error(ImageVerify +"Logo page not successfully displayed");
+				throw new Exception(ImageVerify+"Logo does not exist displayed");
 			}
 		}                     
 		catch(Exception e)	
 		{
-			Extent_Reporting.Log_Fail("SOTC Logo does not exist",	"Failed",driver);
-			Log.error("SOTC Logo does not exist does not exist");
+			Extent_Reporting.Log_Fail(ImageVerify +"Logo does not exist",	"Failed",driver);
+			Log.error(ImageVerify+" Logo does not exist does not exist");
 			e.printStackTrace();
 			throw new Exception("Test failed due to Logo does not displayed");
 		}
@@ -117,19 +121,19 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 			Thread.sleep(2000);
 			if(Assert.isElementDisplayed(driver, "//img[@src='"+Merchantlogo+"']", "DashBoard" ))
 			{         	
-				Assert.Verify_Image(driver, "//img[@src='"+Merchantlogo+"']", "SOTC Logo");
-				Assert.isElementDisplayed(driver, "//img[@src='"+Merchantlogo+"']", "SOTC Fav icon");
+				Assert.Verify_Image(driver, "//img[@src='"+Merchantlogo+"']", ImageVerify +"Logo");
+				Assert.isElementDisplayed(driver, "//img[@src='"+Merchantlogo+"']", ImageVerify+" Fav icon");
 				Extent_Reporting.Log_report_img("Respective Details is exist", "Passed", driver);
 			}else{
-				Extent_Reporting.Log_Fail("SOTC Logo  page does not exis",	"Failed",driver);
-				Log.error("SOTC Logo page not successfully displayed");
-				throw new Exception("SOTC Logo does not exist displayed");
+				Extent_Reporting.Log_Fail(ImageVerify+" Logo  page does not exis",	"Failed",driver);
+				Log.error(ImageVerify+" Logo page not successfully displayed");
+				throw new Exception(ImageVerify+" Logo does not exist displayed");
 			}
 		}                     
 		catch(Exception e)	
 		{
-			Extent_Reporting.Log_Fail("SOTC Logo does not exist",	"Failed",driver);
-			Log.error("SOTC Logo does not exist does not exist");
+			Extent_Reporting.Log_Fail(ImageVerify+" Logo does not exist",	"Failed",driver);
+			Log.error(ImageVerify+" Logo does not exist does not exist");
 			e.printStackTrace();
 			throw new Exception("Test failed due to Logo does not displayed");
 		}
@@ -180,7 +184,6 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 				}else if(i==tblbodyCount.size()-1){
 					if(Assert.isElementDisplayed(driver, "//a[contains(text(),'Next')]", "Next")){
 					Assert.Clickbtn(driver, "//a[contains(text(),'Next')]", "Next Button");
-					Extent_Reporting.Log_Fail("There is no header of Payment URL", "Failed", driver);
 					Manage_invoicePayNowLink();					
 					}else{
 						Extent_Reporting.Log_Fail("There are no records in pay Now Status", "Failed", driver);
@@ -189,8 +192,8 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 			}			
 		}catch(Exception e)	
 		{
-			Extent_Reporting.Log_Fail("SCOT Logo does not exist",	"Failed",driver);
-			Log.error("SCOT Logo does not exist does not exist");
+			Extent_Reporting.Log_Fail(ImageVerify+" Logo does not exist",	"Failed",driver);
+			Log.error(ImageVerify+" Logo does not exist does not exist");
 			e.printStackTrace();
 			throw new Exception("Test failed due to Logo does not displayed");
 		}

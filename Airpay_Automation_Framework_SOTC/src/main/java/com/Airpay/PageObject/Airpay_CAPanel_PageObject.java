@@ -1,6 +1,7 @@
 package com.Airpay.PageObject;
 
 public class Airpay_CAPanel_PageObject {
+	
 
 	
 	//*************************CA Panel Login *******************************************************
