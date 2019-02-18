@@ -28,10 +28,22 @@ public class Airpay_CAPanel_PageObject {
 
 			
 			
+	//************************************SinglePage Links Locators ****************************************
+			
+			public static final String FirstName = "//input[@id='paymentmaster-first_name']";
+			public static final String LastName = "//input[@id='paymentmaster-last_name']";
+			public static final String Email = "//input[@id='paymentmaster-email']";
+			public static final String PhoneNumber = "//input[@id='paymentmaster-phone']";
+			public static final String AmountField = "//input[@id='paymentmaster-amount']";
+
+			public static final String TotalErrorField = "(//div[contains(@class,'required has-error')]/*[contains(@name,'PaymentMaster')])";
+			public static final String SelectDropDown = "(//div[contains(@class,'required has-error')]/select[contains(@name,'PaymentMaster')])";
+			public static final String InputTextField ="(//div[contains(@class,'required has-error')]/input[contains(@name,'PaymentMaster')])";
+			public static final String SubmitBtn = "//button[@id='subm']";
 			
 			
-			
-			
+			public static final String CancelTransaction = "//div[@class='sorry sorrytransaction']";
+			public static final String SandboxModeMsg ="//div[@class='sandbox-msg']";
 			
 			
 			
