@@ -44,14 +44,94 @@ public class Airpay_CAPanel_PageObject {
 			
 			public static final String CancelTransaction = "//div[@class='sorry sorrytransaction']";
 			public static final String SandboxModeMsg ="//div[@class='sandbox-msg']";
+			public static final String FailedTransactionErrMsg ="//div[@class='sorry sorrytransaction']/p";
+
+			public static final String CreditCardNoInput ="(//div[@class='blockMain blockCards credit-tab']//following::input[contains(@class,'form-control cardNumber')])[1]";
+			public static final String CreditCardExpDate = "(//div[@class='blockMain blockCards credit-tab']//following::input[contains(@class,'form-control exp_date')])[1]";
+			public static final String CreditCardCVVCode ="(//div[@class='blockMain blockCards credit-tab']//following::input[contains(@class,'form-control cvv')])[1]";
+			public static final String CreditCardMakePaymtBtn = "//input[@class='btn submit-credit-dtls']";
+			public static final String CreditCardHolderName = "(//div[@class='blockMain blockCards credit-tab']//following::input[contains(@class,'form-control cardname')])[1]";
+			public static final String CreditCardErrField = "//div[@class='formDom form-group errorvalue']//label";
+			public static final String CardInvalidErrMsgVerify = "(//*[@class='generic-error'])[1]";
+			public static final String GenericSuccessMessage = "(//*[@class='generic-success'])[1]";
+			public static final String PopupErrmShbBtn = "(//*[@class='msgclosebtn'])[1]";
 			
-			
-			
-			
-			
+				
 			public static final  String  HeaderTabsVerify = "//ul[@class='r-tabs-nav']/li";
+			
+			
 			
 			public static final  String  payHerebtn= "//button[@type='submit']";
 	
-	
+			
+    //******************************************** Invoice pay ***************************************
+			public static final String InvoiceLogo ="//img[@class='img_style' or @src='https://payments.invoicepay.co.in/uploads/531/logo_1549967156.png' or @class='main-logo']";	
+			public static final String InvoicePageFirstName ="//input[@class='form-control' and @id='FIRST_NAME']";	
+			public static final String InvoicePageLastName ="//input[@class='form-control' and @id='LAST_NAME' and @name='LAST_NAME']";	
+			public static final String InvoiceEmail ="//input[@class='form-control' and @id='LAST_NAME' and @name='EMAIL']";	
+			public static final String InvoiceNumber ="//input[@class='form-control' and @id='INVOICE_NUMBER' and @name='INVOICE_NUMBER']";	
+			public static final String InvoicePhoneNumber ="//input[@class='form-control' and @id='PHONE' and @name='PHONE']";	
+
+			public static final String InvoiceTotAmount ="//input[@class='form-control' and @id='TOTAL_AMOUNT' and @name='TOTAL_AMOUNT']";	
+			//public static final String InvoicePhoneNumber ="//input[@class='form-control' and @id='PHONE' and @name='PHONE']";	
+			public static final String InvoiceCreateBtn ="//input[ @id='invoice-create']";	
+
+			public static final String InvoiceNo = "(//div[@id='invoiceno']/h4)[1]";
+			public static final String Invoicedetails = "//div[@id='invoice-for']";
+			public static final String InvoiceActualName = "//div[@id='invoice-for']/h4";
+			public static final String AmountActual = "//td[@id='amountdue']";
+			
+			
+			
+			public static final String PhoneNumberGetVal = "//input[@id='Customer_PHONE']";
+			public static final String EmailGetVal = "//input[@id='Customer_EMAIL']";
+			public static final String FirstNameGetVal = "//input[@id='Customer_FIRST_NAME']";
+			public static final String LastnameGetVal = "//input[@id='Customer_LAST_NAME']";
+			public static final String AmountGetVal = "//span[@id='payamount2']";
+			public static final String termsAndConditionchkbox = "//input[@id='Invoice_iagree']";
+			public static final String termsAndConditionlink = "//a[text()='terms and conditions.']";			
+			public static final String CloseTermsAndCondition = "//a[@title='Close']";
+
+			
+			public static final String SerialNumber ="//span[@class='placeholder-serial']";
+			public static final String AnnumitantName ="//*[@class='input-name']";
+			public static final String InvoiceFailedTransactions ="//div[@class='tran_error']";
+			
+			public static final String InvoiceLoginID ="//input[@id='LoginForm_username']";
+			public static final String InvoiceLoginPWD ="//input[@id='LoginForm_password']";
+
+			public static final String InvoiceImportBtn ="//input[@id='import-button']";
+			public static final String InvoiceExportBtn ="//input[@id='export-button']";
+			public static final String ChooseLink ="//a[@class='file-input-wrapper btn btn-default ']";
+			public static final String InvoiceSendMail ="//select[@id='InvoiceImport_send_email']";
+			public static final String InvoiceSendSMS ="//select[@id='InvoiceImport_send_sms']";
+			public static final String ExportSubmitBtn ="//input[@class='btn btn-primary lg-btn']";
+
+			
+			
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 }

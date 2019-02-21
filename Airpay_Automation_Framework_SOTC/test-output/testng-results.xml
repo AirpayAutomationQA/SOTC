@@ -1,17 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testng-results skipped="0" failed="0" total="1" passed="1">
+<testng-results skipped="0" failed="0" total="2" passed="2">
   <reporter-output>
   </reporter-output>
-  <suite name="Main Test Suite" duration-ms="80524" started-at="2019-02-18T08:21:32Z" finished-at="2019-02-18T08:22:52Z">
+  <suite name="Airpay" duration-ms="60157" started-at="2019-02-21T04:49:19Z" finished-at="2019-02-21T04:50:19Z">
     <groups>
     </groups>
-    <test name="TestNG Test Group1" duration-ms="80524" started-at="2019-02-18T08:21:32Z" finished-at="2019-02-18T08:22:52Z">
-      <class name="com.Airpay.Utilities.Create_TestNGXML">
-        <test-method status="PASS" signature="createXMLfile()[pri:0, instance:com.Airpay.Utilities.Create_TestNGXML@5622fdf]" name="createXMLfile" duration-ms="80493" started-at="2019-02-18T13:51:32Z" finished-at="2019-02-18T13:52:52Z">
+    <test name="TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation" duration-ms="60157" started-at="2019-02-21T04:49:19Z" finished-at="2019-02-21T04:50:19Z">
+      <class name="com.Airpay.Tests.TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation">
+        <test-method status="PASS" signature="initializeTestBaseSetup(java.lang.String, java.lang.String, java.lang.String)[pri:0, instance:com.Airpay.Tests.TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation@c3fa05a]" name="initializeTestBaseSetup" is-config="true" duration-ms="13519" started-at="2019-02-21T10:19:19Z" finished-at="2019-02-21T10:19:32Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[CHROME]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[http://localhost/airpay_php/transaction.html]]>
+              </value>
+            </param>
+            <param index="2">
+              <value>
+                <![CDATA[TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation]]>
+              </value>
+            </param>
+          </params>
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- createXMLfile -->
-      </class> <!-- com.Airpay.Utilities.Create_TestNGXML -->
-    </test> <!-- TestNG Test Group1 -->
-  </suite> <!-- Main Test Suite -->
+        </test-method> <!-- initializeTestBaseSetup -->
+        <test-method status="PASS" signature="setup()[pri:1, instance:com.Airpay.Tests.TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation@c3fa05a]" name="setup" duration-ms="8" started-at="2019-02-21T10:19:32Z" finished-at="2019-02-21T10:19:32Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setup -->
+        <test-method status="PASS" signature="TC_TestCaseName()[pri:2, instance:com.Airpay.Tests.TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation@c3fa05a]" name="TC_TestCaseName" duration-ms="46446" started-at="2019-02-21T10:19:32Z" finished-at="2019-02-21T10:20:19Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- TC_TestCaseName -->
+        <test-method status="PASS" signature="tearDown()[pri:0, instance:com.Airpay.Tests.TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation@c3fa05a]" name="tearDown" is-config="true" duration-ms="166" started-at="2019-02-21T10:20:19Z" finished-at="2019-02-21T10:20:19Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+      </class> <!-- com.Airpay.Tests.TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation -->
+    </test> <!-- TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation -->
+  </suite> <!-- Airpay -->
 </testng-results>

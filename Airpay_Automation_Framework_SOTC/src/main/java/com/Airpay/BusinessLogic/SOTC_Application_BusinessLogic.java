@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -84,6 +83,89 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 			throw new Exception("SCOT panel page issue");
 		}
 	}
+	
+	public void Invoice_Panel_Login() throws Exception{
+		try{			
+			String MA_URL = Excel_Handling.Get_Data(TC_ID, "CollectionURL").trim();	
+			driver.get(MA_URL);		
+			if(Assert.isElementDisplayed(driver, CAloginID,"SOTC Login")){
+				Assert.inputText(driver, CAloginID, Excel_Handling.Get_Data(TC_ID, "User_Name").trim(), "CA Panel USer ID");
+				Assert.inputText(driver, CAPwd, Excel_Handling.Get_Data(TC_ID, "PWD").trim(), "Ca panel PWD");
+				Extent_Reporting.Log_report_img("Login Details entered", "Passed", driver);
+				Assert.clickButton(driver,CASubmitBtn, "Sign In button");
+				Assert.waitForPageToLoad(driver);
+				Thread.sleep(10000);
+			}				
+			Assert.waitForPageToLoad(driver);			
+			//CA_Panel_Logout();
+		}catch(Exception t){
+			t.printStackTrace();
+			Extent_Reporting.Log_Fail("SCOT Panel User field does not exist", "Failed", driver);
+			throw new Exception("SCOT panel page issue");
+		}
+	}
+	
+	
+	public void InvoiceLogoVerify() throws Exception{
+		try{							
+			if(Assert.isElementDisplayed(driver, InvoiceLogo,"Logo Invoice")){
+				Assert.Verify_Image(driver, InvoiceLogo, "Invoice Logo");				
+				Assert.waitForPageToLoad(driver);
+				Thread.sleep(10000);
+			}else{
+				Extent_Reporting.Log_report_img("Logo does not exist", "Failed", driver);
+			}
+		}catch(Exception t){
+			t.printStackTrace();
+			Extent_Reporting.Log_report_img("Logo does not exist", "Failed", driver);
+			throw new Exception("SCOT panel page issue");
+		}
+	}
+	
+	
+	public void InvoiceImportBtnVerify() throws Exception {
+		try{							
+			if(Assert.isElementDisplayed(driver, InvoiceImportBtn,"Import Button")){
+				Assert.Clickbtn(driver, InvoiceImportBtn, "Import Button");			
+				Assert.waitForPageToLoad(driver);
+				InvoiceLogoVerify();
+				Assert.isElementDisplayed(driver, ChooseLink, "Choose Link Field");
+				Assert.isElementDisplayed(driver, InvoiceSendMail, "Invoice ");
+				Assert.isElementDisplayed(driver, InvoiceSendSMS, "Choose Link Field");
+				Assert.isElementDisplayed(driver, ExportSubmitBtn, "Choose Link Field");
+				Thread.sleep(10000);
+			}else{
+				Extent_Reporting.Log_report_img("Import Button does not exist", "Failed", driver);
+			}
+		}catch(Exception t){
+			t.printStackTrace();
+			Extent_Reporting.Log_report_img("Import Button does not exist", "Failed", driver);
+			throw new Exception("SCOT panel page issue");
+		}
+	}
+	
+	
+	public void InvoiceExportsBtnVerify() throws Exception {
+		try{							
+			if(Assert.isElementDisplayed(driver, InvoiceExportBtn,"Export Button")){
+				Assert.Clickbtn(driver, InvoiceExportBtn, "Export Button");			
+				Assert.waitForPageToLoad(driver);
+				InvoiceLogoVerify();
+				Extent_Reporting.Log_Pass("Export Button Is exist", "Passed");
+				Extent_Reporting.Log_report_img("Screen print", "Passed", driver);
+				Thread.sleep(10000);
+			}else{
+				Extent_Reporting.Log_report_img("Export Button does not exist", "Failed", driver);
+			}
+		}catch(Exception t){
+			t.printStackTrace();
+			Extent_Reporting.Log_report_img("Export Button does not exist", "Failed", driver);
+			throw new Exception("Export Button");
+		}
+	}
+	
+	
+	
 	public static String ImageVerify = null; 
 
 	public void Verify_SCOT_Logo() throws Exception {
@@ -341,8 +423,25 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 			throw new Exception("Tab does not exist");
 		}
 	}
+	
+	public void Credit_cardProvidingValues() throws Exception{
+		try{		   		   
+			Assert.inputText(driver, CreditCardNoInput, Excel_Handling.Get_Data(TC_ID, "ValidCardNumber").trim(), "Credit card Number input field");
+			Assert.inputText(driver, CreditCardHolderName,Excel_Handling.Get_Data(TC_ID, "CardHolderName").trim(), "Credit card Holder Name Field");		   
+			Assert.inputText(driver, CreditCardExpDate,Excel_Handling.Get_Data(TC_ID, "CardExpDate").trim(), "Credit card Number Exp Date");
+			Assert.inputText(driver, CreditCardCVVCode,Excel_Handling.Get_Data(TC_ID, "CardCVVCode").trim(), "Credit card Number CVVCode");
+			Extent_Reporting.Log_report_img("Credit Card details entered", "Passed", driver);
+			Assert.Clickbtn(driver, CreditCardMakePaymtBtn, "Credit Card make payment button");		   
+		}catch(Exception e)	
+		{
+			Extent_Reporting.Log_Fail("Some fields or else data issue is exist", "Failed", driver);   
+			Log.error("Test failed due Some fields or else data issue is exist");
+			e.printStackTrace();
+			throw new Exception("Some fields or else data issue is exist");
+		}
+	}
 
-
+	
 	public void SinglePage_Link() throws Exception{
 		try{
 
@@ -357,14 +456,63 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 				SinglePageConstant_Field();
 				DynamicSinglepage_field();	
 				sumbitBtn();
+				SinglePager_PaymentPage_BusinessLogic AirPay_Local = new SinglePager_PaymentPage_BusinessLogic(driver, TC_ID);
+				AirPay_Local.Card_Details_Options();			
+				if(AirPay_Local.SandBoxMode("You are in Sandbox mode (Your account will not be charged)")==true)
+				{
+					Credit_cardProvidingValues();
+					AirPay_Local.Cash_paymentSuccessMesg();
+				}else{
+					AirPay_Local.FooterVerify();
+					AirPay_Local.FailedTransaction();					
+				}
 			}
 		}catch(Exception t){
 			t.printStackTrace();
-			Extent_Reporting.Log_Fail("Respective Logo is exist for :"+title, "Failed", driver);
 			throw new Exception("SCOT panel page issue");
 		}
 	}
 
+	
+	public void InvoiceSinglePage_Link() throws Exception{
+		try{
+
+			String[] MA_URL = Excel_Handling.Get_Data(TC_ID, "CollectionURL").split(";");	
+			for(int URL=0;URL<MA_URL.length;URL++){	
+				System.out.println(MA_URL[URL]);
+				Thread.sleep(2000);
+				driver.get(MA_URL[URL]);
+				String title=   driver.getTitle();
+				Extent_Reporting.Log_Pass("Link for: "+MA_URL[URL], "Passed");
+				Extent_Reporting.Log_Pass("Resoective Logo is exist for :"+title, "Passed");
+				InvoiceSinglePageConstant_Field();
+				//DynamicSinglepage_field();	
+				InvoiceCreateBtn();
+				InvoiceNavigatePage();
+				InvoiceSinglePageCrossVerifyData();
+				InvoiceTermsAndCondition_Field();
+				InvoiceTermsAndConditionChkPay_Field();
+				SinglePager_PaymentPage_BusinessLogic AirPay_Local = new SinglePager_PaymentPage_BusinessLogic(driver, TC_ID);
+				AirPay_Local.Card_Details_Options();
+				if(AirPay_Local.SandBoxMode("You are in Sandbox mode (Your account will not be charged)")==true)
+				{
+					Credit_cardProvidingValues();
+					AirPay_Local.InvoiceCash_paymentSuccessMesg();
+				}else{
+					AirPay_Local.FooterVerify();
+					AirPay_Local.InvoiceFailedTransaction();					
+				}
+			}
+		}catch(Exception t){
+			t.printStackTrace();
+			throw new Exception("SCOT panel page issue");
+		}
+	}
+	
+	
+	
+	
+	
 	public void SinglePageConstant_Field() throws Exception{
 		try{
 			if(Assert.isElementDisplayed(driver, ImgLogo, "Image Logo")){
@@ -392,6 +540,145 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 
 	
 	
+	public void InvoiceSinglePageConstant_Field() throws Exception{
+		try{
+			if(Assert.isElementDisplayed(driver, InvoiceLogo, "Image Logo")){
+				Assert.Verify_Image(driver, InvoiceLogo, "Airpay Logo");		
+				Assert.inputText(driver, InvoicePageFirstName, Excel_Handling.Get_Data(TC_ID, "First_Name").trim(), "First Name");
+				Assert.inputText(driver, InvoicePageLastName, Excel_Handling.Get_Data(TC_ID, "Last_Name").trim(), "Second Name");
+				Assert.inputText(driver, InvoiceEmail, Excel_Handling.Get_Data(TC_ID, "Email").trim(), "Email");
+				Assert.inputText(driver, InvoiceNumber, Excel_Handling.Get_Data(TC_ID, "InVoiceNumber").trim(), "Phone Number");
+				Assert.inputText(driver, InvoicePhoneNumber, Excel_Handling.Get_Data(TC_ID, "PhoneNumber").trim(), "Phone Number");
+				String Value = driver.findElement(By.xpath(InvoiceTotAmount)).getAttribute("readonly");
+				System.out.println("Value Amount: "+Value);
+				if(Value==null){
+					Assert.inputText(driver, InvoiceTotAmount, Excel_Handling.Get_Data(TC_ID, "AmoutField").trim(), "Amount");
+				}
+				Extent_Reporting.Log_Pass("Constant Field Entered", "Passed");
+				Extent_Reporting.Log_report_img("Fields Entered", "Passed", driver);
+			}else{
+				Extent_Reporting.Log_Fail("Image Logo does not exist", "Failed", driver);
+			}
+		}catch(Exception t){
+			t.printStackTrace();
+			Extent_Reporting.Log_Fail("Image Logo is exist for :"+title, "Failed", driver);
+			throw new Exception("Image panel page issue");
+		}
+	}
+	
+	
+	public void InvoiceTermsAndCondition_Field() throws Exception{
+		try{
+			if(Assert.isElementDisplayed(driver, termsAndConditionchkbox, "Terms and Condition check box")){
+				
+				Assert.Clickbtn(driver, termsAndConditionlink, "Terms and Condition link");
+				Thread.sleep(2000);
+				if(Assert.isElementDisplayed(driver, CloseTermsAndCondition, "Terms and Condition")){
+					Extent_Reporting.Log_Pass("As expecetd", "Passed");
+					Extent_Reporting.Log_report_img("Screen print", "pASSED", driver);
+					Assert.Clickbtn(driver, CloseTermsAndCondition, "Close button");
+
+				}else{
+					Extent_Reporting.Log_Fail("Terms and Condition page does not exist", "failed", driver);
+				}
+				
+			}else{
+				Extent_Reporting.Log_Fail("Terms and Condition check box does not exist", "Failed", driver);
+			}
+		}catch(Exception t){
+			t.printStackTrace();
+			Extent_Reporting.Log_Fail("Terms and Condition check box does not exist", "Failed", driver);
+			throw new Exception("Image panel page issue");
+		}
+	}
+	
+	public void InvoiceTermsAndConditionChkPay_Field() throws Exception{
+		try{
+			if(Assert.isElementDisplayed(driver, termsAndConditionchkbox, "Terms and Condition check box")){
+				
+				Assert.Clickbtn(driver, termsAndConditionchkbox, "Terms and Condition link");
+				if(Assert.isElementDisplayed(driver, "//a[@id='mkpayment']", "Terms and Condition")){
+					Extent_Reporting.Log_report_img("Screen print", "pASSED", driver);
+					Assert.Clickbtn(driver, "//a[@id='mkpayment']", "Close button");
+					Thread.sleep(5000);
+				}else{
+					Extent_Reporting.Log_Fail("Terms and Condition page does not exist", "failed", driver);
+				}
+				
+			}else{
+				Extent_Reporting.Log_Fail("Terms and Condition check box does not exist", "Failed", driver);
+			}
+		}catch(Exception t){
+			t.printStackTrace();
+			Extent_Reporting.Log_Fail("Terms and Condition check box does not exist", "Failed", driver);
+			throw new Exception("Image panel page issue");
+		}
+	}
+	
+			
+			
+			
+	public void InvoiceNavigatePage() throws Exception{
+		try{
+			Thread.sleep(5000);
+			if(Assert.isElementDisplayed(driver, "(//a)[1]", "Terms and Condition check box")){			
+				Assert.Clickbtn(driver, "(//a)[1]", "Terms and Condition link");
+				Thread.sleep(5000);
+				if(Assert.isElementDisplayed(driver, InvoiceLogo, "Image Logo")){
+					Extent_Reporting.Log_report_img("Screen print", "pASSED", driver);
+					
+				}else{
+					Extent_Reporting.Log_Fail("Terms and Condition page does not exist", "failed", driver);
+				}
+				
+			}else{
+				Extent_Reporting.Log_Fail("Terms and Condition check box does not exist", "Failed", driver);
+			}
+		}catch(Exception t){
+			t.printStackTrace();
+			Extent_Reporting.Log_Fail("Terms and Condition check box does not exist", "Failed", driver);
+			throw new Exception("Image panel page issue");
+		}
+	}
+	
+	
+	
+	public void InvoiceSinglePageCrossVerifyData() throws Exception{
+		try{
+			if(Assert.isElementDisplayed(driver, InvoiceLogo, "Image Logo"))
+			{
+				Assert.Verify_Image(driver, InvoiceLogo, "Airpay Logo");		
+				String InvoicNumber = driver.findElement(By.xpath(InvoiceNo)).getText().split(" ")[2].trim();			
+				String AmountV = driver.findElement(By.xpath(AmountActual)).getText().trim();
+				String LastnameGetVa = driver.findElement(By.xpath(LastnameGetVal)).getAttribute("value").trim();
+				String FirstNameGetVa = driver.findElement(By.xpath(FirstNameGetVal)).getAttribute("value").trim();
+				String EmailGetVa = driver.findElement(By.xpath(EmailGetVal)).getAttribute("value").trim();
+				String PhoneNumberGetVa = driver.findElement(By.xpath(PhoneNumberGetVal)).getAttribute("value").trim();
+				String AmountGetVa = driver.findElement(By.xpath(AmountGetVal)).getText().trim();
+				if(InvoicNumber.contains(Excel_Handling.Get_Data(TC_ID, "InVoiceNumber").trim())&& AmountV.contains(Excel_Handling.Get_Data(TC_ID, "AmoutField").trim())
+						&& AmountGetVa.contains(Excel_Handling.Get_Data(TC_ID, "AmoutField").trim())&&PhoneNumberGetVa.contains(Excel_Handling.Get_Data(TC_ID, "PhoneNumber").trim())
+						&&FirstNameGetVa.contains(Excel_Handling.Get_Data(TC_ID, "First_Name").trim()) &&LastnameGetVa.contains(Excel_Handling.Get_Data(TC_ID, "Last_Name").trim())
+						&& EmailGetVa.contains(Excel_Handling.Get_Data(TC_ID, "Email").trim())){					
+					Assert.isElementDisplayed(driver, "//div[@id='invoice-for']/p[text()='"+Excel_Handling.Get_Data(TC_ID, "PhoneNumber").trim()+"']", "Phone number is");
+					Assert.isElementDisplayed(driver, "//div[@id='invoice-for']/p[text()='"+Excel_Handling.Get_Data(TC_ID, "Email").trim()+"']", "Email is");
+					Extent_Reporting.Log_Pass("All fields are exist as expected", "Passed");
+					Extent_Reporting.Log_report_img("Screen Print", "Passed", driver);
+				 Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, "//select[@id='paymethodselect']", Excel_Handling.Get_Data(TC_ID, "Payment_Mode").trim(), "PayMethod");
+				Extent_Reporting.Log_Pass("Pay Method selected as: "+Excel_Handling.Get_Data(TC_ID, "Payment_Mode").trim(), "Passed");
+				}else
+				{
+					Extent_Reporting.Log_Fail("Cross verify Data Went wrong", "Failed", driver);
+				}
+			}else{
+				Extent_Reporting.Log_Fail("Image Logo does not exist", "Failed", driver);
+			}
+		}catch(Exception t){
+			t.printStackTrace();
+			Extent_Reporting.Log_Fail("Image Logo is exist for :"+title, "Failed", driver);
+			throw new Exception("Image panel page issue");
+		}
+	}
+	
 	public void DynamicSinglepage_field() throws Exception{
 		try{
 			if(Assert.isElementDisplay(driver, SubmitBtn))
@@ -407,7 +694,7 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 				Select select =new Select(selectDropBox1);
 				List<WebElement> optionValue = select.getOptions();
 				System.out.println("DropDown Size: "+optionValue.size());	
-				Assert.selectDropBoxValue(driver, SelectDropDown+"["+i+"]", 1, "Drop Down");//(driver, Netbank_DropDown, value[i], value[i+1]+" Bank ");			
+				Assert.selectDropBoxValue(driver, SelectDropDown+"["+i+"]", 2, "Drop Down");//(driver, Netbank_DropDown, value[i], value[i+1]+" Bank ");			
 				Extent_Reporting.Log_Pass("Text Area Entered", "Passed");
 				Extent_Reporting.Log_report_img("All fields Entered", "Passed", driver);		
 			}	
@@ -432,7 +719,20 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 		}
 	}
 	
-	
+	public void InvoiceCreateBtn() throws Exception{
+		try{
+			if(Assert.isElementDisplay(driver, InvoiceCreateBtn)){
+				Assert.Clickbtn(driver, InvoiceCreateBtn, "Submit button");
+				Extent_Reporting.Log_Pass("Sumbit the single page", "passed");
+			}		
+		}catch(Exception e)	
+		{
+			Extent_Reporting.Log_Fail("Some fileds are missed to feed the data",	"Failed",driver);
+			Log.error("Some fileds are missed to feed the data");
+			//e.printStackTrace();
+			throw new Exception("Test failed due to Logo does not displayed");
+		}
+	}
 	
 	
 	public void sumbitBtn() throws Exception{

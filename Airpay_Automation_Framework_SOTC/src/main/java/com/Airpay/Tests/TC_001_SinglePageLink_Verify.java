@@ -27,18 +27,7 @@ public class TC_001_SinglePageLink_Verify extends Driver_Setup{
 		try {
 			Log.info("Script Starts..");
 			SOTC_Application_BusinessLogic CA_panel = new SOTC_Application_BusinessLogic(driver, TC_ID);
-			SinglePager_PaymentPage_BusinessLogic AirPay_Local = new SinglePager_PaymentPage_BusinessLogic(driver, TC_ID);
-
-			CA_panel.SinglePage_Link();
-			AirPay_Local.Card_Details_Options();			
-			if(AirPay_Local.SandBoxMode("You are in Sandbox mode (Your account will not be charged)")==true){
-				AirPay_Local.Cash_paymentSuccessMesg();
-			}else{
-				AirPay_Local.FooterVerify();
-			}
-			
-			
-			
+			CA_panel.SinglePage_Link();		
 			//CA_panel.CA_Panel_Logout();
 			Log.info("Scripts Ends....");
 		} catch (Exception e) {

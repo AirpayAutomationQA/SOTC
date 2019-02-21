@@ -2,14 +2,14 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite guice-stage="DEVELOPMENT" name="Failed suite [Airpay]">
   <parameter name="appURL" value="http://localhost/airpay_php/transaction.html"/>
-  <parameter name="tcID" value="TC_001_SinglePageLink_Verify"/>
+  <parameter name="tcID" value="TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation"/>
   <parameter name="browserType" value="CHROME"/>
-  <test name="TC_001_SinglePageLink_Verify">
+  <test name="TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation">
     <parameter name="appURL" value="http://localhost/airpay_php/transaction.html"/>
-    <parameter name="tcID" value="TC_001_SinglePageLink_Verify"/>
+    <parameter name="tcID" value="TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation"/>
     <parameter name="browserType" value="CHROME"/>
     <classes>
-      <class name="com.Airpay.Tests.TC_001_SinglePageLink_Verify"/>
+      <class name="com.Airpay.Tests.TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation"/>
     </classes>
-  </test> <!-- TC_001_SinglePageLink_Verify -->
+  </test> <!-- TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation -->
 </suite> <!-- Failed suite [Airpay] -->

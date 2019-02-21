@@ -13,6 +13,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
+import com.Airpay.PageObject.Airpay_CAPanel_PageObject;
 import com.Airpay.PageObject.Airpay_PaymentPage_PageObject;
 import com.Airpay.Reporting.Extent_Reporting;
 import com.Airpay.TestData.Excel_Handling;
@@ -473,12 +474,12 @@ public class SinglePager_PaymentPage_BusinessLogic extends Airpay_PaymentPage_Pa
 	public boolean SandBoxMode(String SuccessMsg) throws Exception {
 		try{ 
 			Log.info("Navigating To Net Banking Page");	 
-			WebElement hiddenDiv = driver.findElement(By.xpath(SuccessMsg));
+			WebElement hiddenDiv = driver.findElement(By.xpath(Airpay_CAPanel_PageObject.SandboxModeMsg));
 			String errMsg = hiddenDiv.getText(); 
 			String script = "return arguments[0].innerText";
 			errMsg = (String) ((JavascriptExecutor) driver).executeScript(script, hiddenDiv);			
 			System.out.println(errMsg);
-			if(errMsg.contains("Password verification link sent to your registered email id."))
+			if(errMsg.contains(SuccessMsg))
 			{
 				Extent_Reporting.Log_Pass("Repective  Message is exist", " Msg is:"+errMsg);
 				Extent_Reporting.Log_report_img("Respective  Message is exist", "Passed", driver);	
@@ -614,6 +615,56 @@ public class SinglePager_PaymentPage_BusinessLogic extends Airpay_PaymentPage_Pa
 		}
 	}
 
+	
+	public void FailedTransaction() throws Exception {
+		try{ 
+			Log.info("Navigating To Payment Page");	
+			Assert.waitForPageToLoad(driver);
+			if(Assert.isElementDisplayed(driver, Airpay_CAPanel_PageObject.FailedTransactionErrMsg, "Footer text" ))
+			{ 
+				
+				Extent_Reporting.Log_report_img("Failed transaction is exist", "Passed", driver);
+			}else{
+				Extent_Reporting.Log_report_img("Failed transaction not does is exist", "Passed", driver);
+				Log.error("Local Host page not successfully displayed");
+				throw new Exception("option does not exist displayed");
+			}
+		}                     
+		catch(Exception e)	
+		{
+			Extent_Reporting.Log_Fail("Airpay Logo does not exist",	"Failed",driver);
+			Log.error("Airpay Logo does not exist does not exist");
+			e.printStackTrace();
+			throw new Exception("Test failed due to Airpay Logo does not displayed");
+		}
+	}
+	
+	public void InvoiceFailedTransaction() throws Exception {
+		try{ 
+			Log.info("Navigating To Payment Page");	
+			Assert.waitForPageToLoad(driver);
+			if(Assert.isElementDisplayed(driver, Airpay_CAPanel_PageObject.InvoiceLogo, "Footer text" ))
+			{ 
+				Assert.isElementDisplayed(driver, Airpay_CAPanel_PageObject.InvoiceFailedTransactions, "Failed");
+				Extent_Reporting.Log_report_img("Failed transaction message is exist", "Passed", driver);
+			}else{
+				Extent_Reporting.Log_report_img("Failed transaction message not does is exist", "Passed", driver);
+				Log.error("Local Host page not successfully displayed");
+				throw new Exception("option does not exist displayed");
+			}
+		}                     
+		catch(Exception e)	
+		{
+			Extent_Reporting.Log_Fail("Airpay Logo does not exist",	"Failed",driver);
+			Log.error("Airpay Logo does not exist does not exist");
+			e.printStackTrace();
+			throw new Exception("Test failed due to Airpay Logo does not displayed");
+		}
+	}
+	
+
+	
+	
 
 	public void BankPage_validation() throws Exception {
 		try{ 
@@ -804,17 +855,18 @@ public class SinglePager_PaymentPage_BusinessLogic extends Airpay_PaymentPage_Pa
 		try{
 			Assert.waitForPageToLoad(driver);
 			Thread.sleep(10000);			
-			if(Assert.isElementDisplay(driver, CashSuccessTransaction)){
-				List<WebElement> tblcontent = driver.findElements(By.xpath("(//table[2]/tbody/tr/td[1])"));
+			if(Assert.isElementDisplay(driver, "(//td[@class='titletd']/b)")){
+				List<WebElement> tblcontent = driver.findElements(By.xpath("(//td[@class='titletd']/b)"));
 				for(int i=1;i<=tblcontent.size();i++)
 				{				
-					String tblrowVal = driver.findElement(By.xpath("(//table[2]/tbody/tr/td[1])["+i+"]")).getText().trim();
+					String tblrowVal = driver.findElement(By.xpath("(//td[@class='titletd']/b)["+i+"]")).getText().trim();
 					System.out.println("rowValue: "+tblrowVal);
-					if(tblrowVal.equalsIgnoreCase("TRANSACTIONID:")){
+					if(tblrowVal.equalsIgnoreCase("Name:")){
 						//Extent_Reporting.Log_Pass("Actual Transaction ID Name Is: "+tblrowVal, "Expected Transaction Id Name is: "+"TRANSACTIONID:");
-						String TxnExpectedID = driver.findElement(By.xpath("(//table[2]/tbody/tr/td[2])["+i+"]")).getText().trim();
-						if(TxnExpectedID.equalsIgnoreCase(OrderID)){
-							Extent_Reporting.Log_Pass("Actual Transaction ID is: "+TxnExpectedID, "Expected Transaction Id Is: "+OrderID);
+						String FirstName = driver.findElement(By.xpath("(//td[@class='subtd'])["+i+"]")).getText().split(" ")[0].trim();
+						String LastName = driver.findElement(By.xpath("(//td[@class='subtd'])["+i+"]")).getText().split(" ")[1].trim();
+						if(FirstName.equalsIgnoreCase(Excel_Handling.Get_Data(TC_ID, "First_Name").trim())&& LastName.equalsIgnoreCase(Excel_Handling.Get_Data(TC_ID, "Last_Name").trim()) ){
+							Extent_Reporting.Log_Pass("First name is : "+FirstName, "Last Name is :"+LastName);
 							Extent_Reporting.Log_report_img("Success payment Transaction ID is as expected", "Passed", driver);
 							break;
 						}
@@ -823,17 +875,17 @@ public class SinglePager_PaymentPage_BusinessLogic extends Airpay_PaymentPage_Pa
 						Extent_Reporting.Log_Fail("Transaction Id Field row Does not exist", "Failed", driver);
 					}					
 				}
-
-				List<WebElement> tblAmout = driver.findElements(By.xpath("(//table[2]/tbody/tr/td[1])"));
+				List<WebElement> tblAmout = driver.findElements(By.xpath("(//td[@class='titletd']/b)"));
 				for(int i=1;i<=tblAmout.size();i++)
 				{				
-					String tblrowVal = driver.findElement(By.xpath("(//table[2]/tbody/tr/td[1])["+i+"]")).getText().trim();
+					String tblrowVal = driver.findElement(By.xpath("(//td[@class='titletd']/b)["+i+"]")).getText().trim();
 					System.out.println("rowValue: "+tblrowVal);
-					if(tblrowVal.equalsIgnoreCase("AMOUNT:")){
+					if(tblrowVal.equalsIgnoreCase("Amount:")){
 						//Extent_Reporting.Log_Pass("Actual Amount field Name Is: "+tblrowVal, "Expected Amount field Name is: "+"AMOUNT:");
-						String TxnAmt = driver.findElement(By.xpath("(//table[2]/tbody/tr/td[2])["+i+"]")).getText().trim();
-						System.out.println("dd"+TxnAmt);
-						if(TxnAmt.contains(Excel_Handling.Get_Data(TC_ID, "Amount").trim())||TxnAmt.contains(Excel_Handling.Get_Data(TC_ID, "AmoutField").trim())){
+						String TxnAmt = driver.findElement(By.xpath("(//td[@class='subtd'])["+i+"]")).getText().split("/")[0];
+						String ActualAmt = TxnAmt.split("Rs.")[1];
+						System.out.println("dd: "+ActualAmt);
+						if(ActualAmt.contains(Excel_Handling.Get_Data(TC_ID, "AmoutField").trim())){
 							Extent_Reporting.Log_Pass("Actual Transaction Amount is: "+TxnAmt, "Passed");
 							Extent_Reporting.Log_report_img("Success payment Transaction Amount is as expected", "Passed", driver);
 							break;
@@ -843,35 +895,18 @@ public class SinglePager_PaymentPage_BusinessLogic extends Airpay_PaymentPage_Pa
 						Extent_Reporting.Log_Fail("Transaction Amount Field row Does not exist", "Failed", driver);
 					}					
 				}				
-				List<WebElement> TranMesg = driver.findElements(By.xpath("(//table[2]/tbody/tr/td[1])"));
+				List<WebElement> TranMesg = driver.findElements(By.xpath("(//td[@class='titletd']/b)"));
 				for(int i=1;i<=TranMesg.size();i++)
 				{				
-					String tblrowVal = driver.findElement(By.xpath("(//table[2]/tbody/tr/td[1])["+i+"]")).getText().trim();
+					String tblrowVal = driver.findElement(By.xpath("(//td[@class='titletd']/b)["+i+"]")).getText().trim();
 					System.out.println("rowValue: "+tblrowVal);
-					if(tblrowVal.equalsIgnoreCase("MESSAGE:")){
-						String TxnMessage = driver.findElement(By.xpath("(//table[2]/tbody/tr/td[2])["+i+"]")).getText().trim();
-						if(TxnMessage.equalsIgnoreCase("Success")){
+					if(tblrowVal.equalsIgnoreCase("Payment reference number:")){
+						String TxnMessage = driver.findElement(By.xpath("(//td[@class='subtd'])["+i+"]")).getText().trim();
+						if(TxnMessage.equalsIgnoreCase(OrderID)){
 							Extent_Reporting.Log_Pass("Actual Transaction TxnMessage is: "+TxnMessage, "Passed");
 							Extent_Reporting.Log_report_img("Success payment Transaction Message is displayed", "Passed", driver);
 							break;
 						}
-					}
-					if(i==tblcontent.size()){
-						Extent_Reporting.Log_Fail("Transaction Amount Field row Does not exist", "Failed", driver);
-					}					
-				}
-
-				List<WebElement> ApTransaction = driver.findElements(By.xpath("(//table[2]/tbody/tr/td[1])"));
-				for(int i=1;i<=ApTransaction.size();i++)
-				{				
-					String tblrowVal = driver.findElement(By.xpath("(//table[2]/tbody/tr/td[1])["+i+"]")).getText().trim();
-					System.out.println("rowValue: "+tblrowVal);
-					if(tblrowVal.equalsIgnoreCase("APTRANSACTIONID:")){
-						AirPaytransactionID = driver.findElement(By.xpath("(//table[2]/tbody/tr/td[2])["+i+"]")).getText().trim();
-						Extent_Reporting.Log_Pass("Airpay Transaction ID is as : "+AirPaytransactionID, "Passed");
-						Extent_Reporting.Log_report_img("Success payment Transaction Message is displayed", "Passed", driver);
-						break;
-
 					}
 					if(i==tblcontent.size()){
 						Extent_Reporting.Log_Fail("Transaction Amount Field row Does not exist", "Failed", driver);
@@ -891,6 +926,35 @@ public class SinglePager_PaymentPage_BusinessLogic extends Airpay_PaymentPage_Pa
 		}
 	}
 
+	public void InvoiceCash_paymentSuccessMesg() throws Exception{
+		try{
+			Assert.waitForPageToLoad(driver);
+			Thread.sleep(10000);			
+			if(Assert.isElementDisplay(driver, "//img[@class='main-logo']")){			
+				String FetchOrderN0 = driver.findElement(By.xpath(Airpay_CAPanel_PageObject.SerialNumber)).getText().trim();
+				String FirstNa    = driver.findElement(By.xpath(Airpay_CAPanel_PageObject.AnnumitantName)).getText().split(" ")[0].trim();
+				String LastNa    = driver.findElement(By.xpath(Airpay_CAPanel_PageObject.AnnumitantName)).getText().split(" ")[1].trim();
+				if(FetchOrderN0.contains(Excel_Handling.Get_Data(TC_ID, "InVoiceNumber").trim())&& FirstNa.contains(Excel_Handling.Get_Data(TC_ID, "First_Name").trim())
+						&& LastNa.contains(Excel_Handling.Get_Data(TC_ID, "Last_Name").trim())){
+					Extent_Reporting.Log_report_img("Screen print", "Passed", driver);
+					Extent_Reporting.Log_Pass("All data is exist as expected", "Passed");
+					
+				}else{
+					Extent_Reporting.Log_Fail("Transaction Success Data is wrong", "Failed", driver);
+				}
+			}else{
+				Extent_Reporting.Log_Fail("Logo Does not Exist", "Failed", driver);
+				throw new Exception("Test failed due to local host page not displayed");
+			}
+		}catch(Exception e) 
+		{
+			Extent_Reporting.Log_Fail("Cash Payment Transaction success Message does not exist", "Failed", driver);
+			Log.error("Test failed due to page is navigating to payment page");
+			e.printStackTrace();
+			throw new Exception("Failed due to Transaction Success message does not exist");
+		}
+	}
+	
    
    
 }
