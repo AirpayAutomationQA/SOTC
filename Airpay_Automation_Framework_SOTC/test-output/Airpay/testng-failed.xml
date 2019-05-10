@@ -2,14 +2,14 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite guice-stage="DEVELOPMENT" name="Failed suite [Airpay]">
   <parameter name="appURL" value="http://localhost/airpay_php/transaction.html"/>
-  <parameter name="tcID" value="TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation"/>
-  <parameter name="browserType" value="CHROME"/>
-  <test name="TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation">
+  <parameter name="tcID" value="TC_ID_Create_Individual_Invoice"/>
+  <parameter name="browserType" value="Chrome"/>
+  <test name="TC_ID_Create_Individual_Invoice">
     <parameter name="appURL" value="http://localhost/airpay_php/transaction.html"/>
-    <parameter name="tcID" value="TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation"/>
-    <parameter name="browserType" value="CHROME"/>
+    <parameter name="tcID" value="TC_ID_Create_Individual_Invoice"/>
+    <parameter name="browserType" value="Chrome"/>
     <classes>
-      <class name="com.Airpay.Tests.TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation"/>
+      <class name="com.Airpay.Tests.Create_Individual_Invoice_Creation_test"/>
     </classes>
-  </test> <!-- TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation -->
+  </test> <!-- TC_ID_Create_Individual_Invoice -->
 </suite> <!-- Failed suite [Airpay] -->

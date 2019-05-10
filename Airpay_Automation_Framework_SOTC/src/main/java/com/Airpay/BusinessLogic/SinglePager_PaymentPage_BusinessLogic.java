@@ -955,6 +955,40 @@ public class SinglePager_PaymentPage_BusinessLogic extends Airpay_PaymentPage_Pa
 		}
 	}
 	
-   
+	
+	
+	
+	
+	public void InvoiceCashExtendPaymentCash() throws Exception{
+		try{
+			Assert.waitForPageToLoad(driver);
+			Thread.sleep(10000);			
+			if(Assert.isElementDisplay(driver, "//img[@class='main-logo']")){			
+				String FetchOrderN0 = driver.findElement(By.xpath(Airpay_CAPanel_PageObject.SerialNumber)).getText().trim();
+				String FirstNa    = driver.findElement(By.xpath(Airpay_CAPanel_PageObject.AnnumitantName)).getText().split(" ")[0].trim();
+				String LastNa    = driver.findElement(By.xpath(Airpay_CAPanel_PageObject.AnnumitantName)).getText().split(" ")[1].trim();
+				if(SOTC_Application_BusinessLogic.TransactionName.contains(FirstNa) && SOTC_Application_BusinessLogic.TransactionName.contains(LastNa)
+						&& SOTC_Application_BusinessLogic.InvoicNumber.contains(FetchOrderN0))  
+				{
+					Extent_Reporting.Log_Pass("All data is exist as expected", "Passed");
+					Extent_Reporting.Log_report_img("Screen print", "Passed", driver);
+					
+				}else{
+					Extent_Reporting.Log_Fail("Transaction Success Data is wrong", "Failed", driver);
+				}
+			}else{
+				Extent_Reporting.Log_Fail("Logo Does not Exist", "Failed", driver);
+				throw new Exception("Test failed due to local host page not displayed");
+			}
+		}catch(Exception e) 
+		{
+			Extent_Reporting.Log_Fail("Cash Payment Transaction success Message does not exist", "Failed", driver);
+			Log.error("Test failed due to page is navigating to payment page");
+			e.printStackTrace();
+			throw new Exception("Failed due to Transaction Success message does not exist");
+		}
+	}
+	
+	
    
 }

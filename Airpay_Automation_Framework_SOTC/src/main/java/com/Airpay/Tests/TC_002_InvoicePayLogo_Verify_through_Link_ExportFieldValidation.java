@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 
 import com.Airpay.BusinessLogic.SOTC_Application_BusinessLogic;
 import com.Airpay.InitialSetup.Driver_Setup;
+import com.Airpay.PageObject.Airpay_CAPanel_PageObject;
 import com.Airpay.Utilities.Log;
 
 public class TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation extends Driver_Setup{
@@ -27,7 +28,7 @@ public class TC_002_InvoicePayLogo_Verify_through_Link_ExportFieldValidation ext
 			Log.info("Script Starts..");
 			SOTC_Application_BusinessLogic CA_panel = new SOTC_Application_BusinessLogic(driver, TC_ID);
 			CA_panel.Invoice_Panel_Login();
-			CA_panel.InvoiceLogoVerify();
+			CA_panel.InvoiceLogoVerify(Airpay_CAPanel_PageObject.InvoiceLogo);
 			CA_panel.InvoiceExportsBtnVerify();
 			Log.info("Scripts Ends....");
 		} catch (Exception e) {

@@ -1,5 +1,9 @@
 package com.Airpay.BusinessLogic;
 
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -7,13 +11,16 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.Airpay.PageObject.Airpay_CAPanel_PageObject;
 import com.Airpay.Reporting.Extent_Reporting;
 import com.Airpay.TestData.Excel_Handling;
 import com.Airpay.Utilities.ElementAction;
 import com.Airpay.Utilities.Log;
+
 
 public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 	public WebDriver driver;
@@ -105,11 +112,33 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 		}
 	}
 	
+	public void Invoice_Write_Data() throws Exception{
+		try{	
+			Excel_Handling.Put_Data(TC_ID, "Write_DataTest", "Pass");
+			String MA_URL = Excel_Handling.Get_Data(TC_ID, "CollectionURL").trim();	
+			driver.get(MA_URL);	
+			if(Assert.isElementDisplayed(driver, CAloginID,"SOTC Login")){
+				
+				
+				//Assert.inputText(driver, CAloginID, Excel_Handling.Put_Data_Replace(TC_ID, "Write_DataTest", "Pass").trim(), "CA Panel USer ID");
+			
+			}				
+			Assert.waitForPageToLoad(driver);			
+			//CA_Panel_Logout();
+		}catch(Exception t){
+			t.printStackTrace();
+			Extent_Reporting.Log_Fail("SCOT Panel User field does not exist", "Failed", driver);
+			throw new Exception("SCOT panel page issue");
+		}
+	}
 	
-	public void InvoiceLogoVerify() throws Exception{
+	
+	
+	
+	public void InvoiceLogoVerify(String xpath) throws Exception{
 		try{							
-			if(Assert.isElementDisplayed(driver, InvoiceLogo,"Logo Invoice")){
-				Assert.Verify_Image(driver, InvoiceLogo, "Invoice Logo");				
+			if(Assert.isElementDisplayed(driver, xpath,"Logo Invoice")){
+				Assert.Verify_Image(driver, xpath, "Invoice Logo");			
 				Assert.waitForPageToLoad(driver);
 				Thread.sleep(10000);
 			}else{
@@ -128,12 +157,32 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 			if(Assert.isElementDisplayed(driver, InvoiceImportBtn,"Import Button")){
 				Assert.Clickbtn(driver, InvoiceImportBtn, "Import Button");			
 				Assert.waitForPageToLoad(driver);
-				InvoiceLogoVerify();
+				InvoiceLogoVerify(InvoiceLogo);
 				Assert.isElementDisplayed(driver, ChooseLink, "Choose Link Field");
 				Assert.isElementDisplayed(driver, InvoiceSendMail, "Invoice ");
 				Assert.isElementDisplayed(driver, InvoiceSendSMS, "Choose Link Field");
 				Assert.isElementDisplayed(driver, ExportSubmitBtn, "Choose Link Field");
 				Thread.sleep(10000);
+			}else{
+				Extent_Reporting.Log_report_img("Import Button does not exist", "Failed", driver);
+			}
+		}catch(Exception t){
+			t.printStackTrace();
+			Extent_Reporting.Log_report_img("Import Button does not exist", "Failed", driver);
+			throw new Exception("SCOT panel page issue");
+		}
+	}
+	
+	public void TanishqImportBtnVerify() throws Exception {
+		try{							
+			if(Assert.isElementDisplayed(driver, InvoiceExportBtn,"Import Button")){
+				Assert.isElementDisplayed(driver, InvoiceExportBtn, "Choose Link Field");
+				Assert.Clickbtn(driver, ManualTanishqBtn, "manual Button");			
+				Assert.waitForPageToLoad(driver);
+				InvoiceLogoVerify(TanishqLogo);
+				Assert.isElementDisplayed(driver, DownLoadManual, "DownLoad Link Field");
+				Assert.isElementDisplayed(driver, ViewManual, "View Link Field");				
+				Extent_Reporting.Log_report_img("Import Button is exist as expected", "passed", driver);
 			}else{
 				Extent_Reporting.Log_report_img("Import Button does not exist", "Failed", driver);
 			}
@@ -150,7 +199,7 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 			if(Assert.isElementDisplayed(driver, InvoiceExportBtn,"Export Button")){
 				Assert.Clickbtn(driver, InvoiceExportBtn, "Export Button");			
 				Assert.waitForPageToLoad(driver);
-				InvoiceLogoVerify();
+				InvoiceLogoVerify(InvoiceLogo);
 				Extent_Reporting.Log_Pass("Export Button Is exist", "Passed");
 				Extent_Reporting.Log_report_img("Screen print", "Passed", driver);
 				Thread.sleep(10000);
@@ -393,7 +442,6 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 			throw new Exception("Test failed due to Profile Logo does not displayed");
 		}
 	}	
-
 	public void CAPanel_HeaderTabs() throws Exception {
 		try{ 
 			Log.info("Navigating To Payment Page");	
@@ -423,6 +471,320 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 			throw new Exception("Tab does not exist");
 		}
 	}
+	public static String geturl= "";
+	@SuppressWarnings("unused")
+	public void InvoicePending() throws Exception {
+		try{ 
+			Log.info("Navigating To Payment Page");	
+			Assert.waitForPageToLoad(driver);	
+			Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, InvoiceStatusDropDown, Excel_Handling.Get_Data(TC_ID, "InvoiceFilterStatus"), "Invoice Status Drop down");
+			Thread.sleep(5000);
+			List<WebElement> Channels = driver.findElements(By.xpath(Invoicetable));
+			int ChannelsCnt = Channels.size();
+			System.out.println("Channels count is:"+ChannelsCnt);
+			for(int i=0; i<ChannelsCnt;i++)
+			{				
+				String name = driver.findElement(By.xpath(Invoicetable+"["+(i+1)+"]")).getText().trim();
+				System.out.println("Table Value: "+name);	
+				if(name.equalsIgnoreCase("Invoice"))
+				{
+					List<WebElement> TblRows = driver.findElements(By.xpath(InvoiceTblRows));
+					for(int j=0;j<TblRows.size();j++)
+					{							
+						Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, InvoiceStatusDropDown, Excel_Handling.Get_Data(TC_ID, "InvoiceFilterStatus").trim(), "Invoice Status Drop down");
+							Extent_Reporting.Log_Pass("payment Pending Records are exist", "passed");
+							Extent_Reporting.Log_report_img("Screen print", "passed", driver);
+							InvocieNumber = driver.findElement(By.xpath(InvoiceTblRows+"["+(j+1)+"]/td["+(i+1)+"]")).getText().trim();
+							geturl = driver.getCurrentUrl();
+							MAPanelWindow = geturl.concat("/"+InvocieNumber);
+							break;						
+										
+					}	
+					Extent_Reporting.Log_Pass("payment Url Pay Header ", "Passed");			
+					Extent_Reporting.Log_report_img("Header Tab is exist", "ScreenShot", driver);								 
+				}
+				
+				if(name.contains("Payment Url"))
+				{
+					List<WebElement> TblRows = driver.findElements(By.xpath(InvoiceTblRows));
+					for(int j=0;j<TblRows.size();j++)
+					{							
+						Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, InvoiceStatusDropDown, Excel_Handling.Get_Data(TC_ID, "InvoiceFilterStatus"), "Invoice Status Drop down");
+						String PaidLink = driver.findElement(By.xpath(InvoiceTblRows+"["+(j+1)+"]/td["+(i+1)+"]")).getText().trim();
+						if(PaidLink.contains("link"))
+						{
+							Extent_Reporting.Log_Pass("payment Pending Records are exist", "passed");
+							Extent_Reporting.Log_report_img("Screen print", "passed", driver);							
+							Assert.clickButton(driver, InvoiceTblRows+"["+(j+1)+"]/td["+(i+1)+"]/a", "payment URL link");							
+							break;						
+						}else{
+							Extent_Reporting.Log_Fail("payment url link does not exist", "Failed", driver);
+						}
+						
+					}	
+					Extent_Reporting.Log_Pass("payment Url Pay Header ", "Passed");			
+					Extent_Reporting.Log_report_img("Header Tab is exist", "ScreenShot", driver);
+					break;					
+				}
+				if(i==ChannelsCnt){
+					Extent_Reporting.Log_Fail("Invoice Pay Status Header does not exist", "Failed", driver);
+				}
+				
+				
+			}
+		}catch(Exception e){
+			Extent_Reporting.Log_Fail("Respective Header does not exists",	"Failed",driver);
+			Log.error("Tab does not exist");
+			e.printStackTrace();
+			throw new Exception("Tab does not exist");
+		}
+	}
+	public static String InvocieNumber="";
+	public void InvoiceCrossVerify() throws Exception {
+		try{ 
+			Log.info("Navigating To Payment Page");				
+			Assert.waitForPageToLoad(driver);
+			Thread.sleep(5000);
+			//driver.close();
+			driver.switchTo().window(browser[0]);
+			Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, InvoiceStatusDropDown, "All", "Invoice Status Drop down");
+			Thread.sleep(2000);
+			List<WebElement> Channels = driver.findElements(By.xpath(Invoicetable));
+			int ChannelsCnt = Channels.size();
+			System.out.println("Channels count is:"+ChannelsCnt);
+			for(int i=0; i<ChannelsCnt;i++)
+			{				
+				String name = driver.findElement(By.xpath(Invoicetable+"["+(i+1)+"]")).getText().trim();
+				System.out.println("Table Value: "+name);	
+				if(name.equalsIgnoreCase("Invoice"))
+				{
+					Assert.inputText(driver, InvoiceNumberEnter, InvocieNumber, "Invoice Entered");
+					Thread.sleep(5000);
+					List<WebElement> TblRows = driver.findElements(By.xpath(InvoiceTblRows));
+					for(int j=0;j<TblRows.size();j++)
+					{							
+						Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, InvoiceStatusDropDown, Excel_Handling.Get_Data(TC_ID, "InvoiceFilterStatus"), "Invoice Status Drop down");
+						String PaidLink = driver.findElement(By.xpath(InvoiceTblRows+"["+(j+1)+"]/td["+(i+1)+"]")).getText().trim();
+						if(PaidLink.contains("Paid"))
+						{
+							Extent_Reporting.Log_Pass("Transaction Moved into paid Status as expected", "passed");
+							Extent_Reporting.Log_report_img("Screen print", "passed", driver);							
+							break;						
+						}						
+					}	
+					Extent_Reporting.Log_Pass("payment Url Pay Header ", "Passed");			
+					Extent_Reporting.Log_report_img("Header Tab is exist", "ScreenShot", driver);								 
+				}
+				
+			}
+		}catch(Exception e){
+			Extent_Reporting.Log_Fail("Respective Transaction Not yet done or else expired",	"Failed",driver);
+			Log.error("Tab does not exist");
+			e.printStackTrace();
+			throw new Exception("Tab does not exist");
+		}
+	}
+	
+	
+	
+	public void InvoiceExtendCrossVerify() throws Exception {
+		try{ 
+			Log.info("Navigating To Payment Page");				
+			Assert.waitForPageToLoad(driver);
+			Thread.sleep(5000);
+			//driver.close();
+			driver.switchTo().window(browser[0]);
+			Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, InvoiceStatusDropDown, "All", "Invoice Status Drop down");
+			Thread.sleep(2000);
+			List<WebElement> Channels = driver.findElements(By.xpath(Invoicetable));
+			int ChannelsCnt = Channels.size();
+			System.out.println("Channels count is:"+ChannelsCnt);
+			for(int i=0; i<ChannelsCnt;i++)
+			{				
+				String name = driver.findElement(By.xpath(Invoicetable+"["+(i+1)+"]")).getText().trim();
+				System.out.println("Table Value: "+name);	
+				if(name.equalsIgnoreCase("Invoice"))
+				{
+					Assert.inputText(driver, InvoiceNumberEnter, InvocieNumber, "Invoice Entered");
+					Thread.sleep(5000);
+					List<WebElement> TblRows = driver.findElements(By.xpath(InvoiceTblRows));
+					Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, InvoiceStatusDropDown, "Paid", "Invoice Status Drop down");
+					for(int j=0;j<TblRows.size();j++)
+					{							
+						String PaidLink = driver.findElement(By.xpath(InvoiceTblRows+"["+(j+1)+"]/td["+(i+1)+"]")).getText().trim();
+						if(PaidLink.contains("Paid"))
+						{
+							Extent_Reporting.Log_Pass("Transaction Moved into paid Status as expected", "passed");
+							Extent_Reporting.Log_report_img("Screen print", "passed", driver);							
+							break;						
+						}						
+					}	
+					Extent_Reporting.Log_Pass("payment Url Pay Header ", "Passed");			
+					Extent_Reporting.Log_report_img("Header Tab is exist", "ScreenShot", driver);								 
+				}
+				
+			}
+		}catch(Exception e){
+			Extent_Reporting.Log_Fail("Respective Transaction Not yet done or else expired",	"Failed",driver);
+			Log.error("Tab does not exist");
+			e.printStackTrace();
+			throw new Exception("Tab does not exist");
+		}
+	}
+	
+	public void Invoicetable() throws Exception {
+		try{ 
+			Log.info("Navigating To Payment Page");	
+			Assert.waitForPageToLoad(driver);	
+			Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, InvoiceStatusDropDown, Excel_Handling.Get_Data(TC_ID, "InvoiceFilterStatus"), "Invoice Status Drop down");
+			Thread.sleep(2000);
+			List<WebElement> Channels = driver.findElements(By.xpath(Invoicetable));
+			int ChannelsCnt = Channels.size();
+			System.out.println("Channels count is:"+ChannelsCnt);
+			for(int i=0; i<ChannelsCnt;i++)
+			{				
+				String name = driver.findElement(By.xpath(Invoicetable+"["+(i+1)+"]")).getText().trim();
+				System.out.println("Table Value: "+name);
+				if(name.contains("Invoice Status"))
+				{
+					List<WebElement> TblRows = driver.findElements(By.xpath(InvoiceTblRows));
+					for(int j=0;j<TblRows.size();j++){							
+						Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, InvoiceStatusDropDown, Excel_Handling.Get_Data(TC_ID, "InvoiceFilterStatus"), "Invoice Status Drop down");
+						String PaidLink = driver.findElement(By.xpath(InvoiceTblRows+"["+(j+1)+"]/td["+(i+1)+"]")).getText().trim();
+						System.out.println("RecordName: "+PaidLink);
+						String InvoiceFilter = Excel_Handling.Get_Data(TC_ID, "InvoiceFilterStatus").trim();
+						switch(InvoiceFilter){						
+						case "Paid":
+							        if(PaidLink.contains("Paid"))
+							        {
+								    Extent_Reporting.Log_Pass("Record Is in :"+PaidLink+" Status", "Passed");							
+									}else{
+										Extent_Reporting.Log_Fail("Filter Option Not working as expecetd", "Failed", driver);
+									}	
+							        break;
+						case "Unpaid":
+							 		if(PaidLink.contains("Pending"))
+							 		{
+							 			Extent_Reporting.Log_Pass("Record Is in :"+PaidLink+" Status", "Passed");							
+							 		}else{
+									Extent_Reporting.Log_Fail("Filter Option Not working as expecetd", "Failed", driver);
+							 		}								
+							 		break;	
+						case "All":
+									if(PaidLink.contains("Unpaid")||PaidLink.contains("paid"))
+							 		{
+							 			Extent_Reporting.Log_Pass("First Record Is in :"+PaidLink+" Status", "Passed");							
+							 		}else{
+									Extent_Reporting.Log_Fail("Filter Option Not working as expecetd", "Failed", driver);
+							 		}								
+							 		break;
+						}
+						int temp = j+1;
+						if(temp==(TblRows.size()))
+						{
+							break;
+						}
+						System.out.println("j"+ j);
+							
+					}				
+					Extent_Reporting.Log_Pass("Invoice Pay Header ", "Passed");			
+					Extent_Reporting.Log_report_img("Header Tab is exist", "ScreenShot", driver);
+					break;					
+				}
+				if(i==ChannelsCnt){
+					Extent_Reporting.Log_Fail("Invoice Pay Status Header does not exist", "Failed", driver);
+				}
+			}
+		}catch(Exception e){
+			Extent_Reporting.Log_Fail("Respective Header does not exists",	"Failed",driver);
+			Log.error("Tab does not exist");
+			e.printStackTrace();
+			throw new Exception("Tab does not exist");
+		}
+	}
+	
+	
+	public void tanishqtable() throws Exception {
+		try{ 
+			Log.info("Navigating To Payment Page");	
+			Assert.waitForPageToLoad(driver);	
+			Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, InvoiceStatusDropDown, Excel_Handling.Get_Data(TC_ID, "InvoiceFilterStatus"), "Invoice Status Drop down");
+			Thread.sleep(2000);
+			List<WebElement> Channels = driver.findElements(By.xpath(Invoicetable));
+			int ChannelsCnt = Channels.size();
+			System.out.println("Channels count is:"+ChannelsCnt);
+			for(int i=0; i<ChannelsCnt;i++)
+			{				
+				String name = driver.findElement(By.xpath(Invoicetable+"["+(i+1)+"]")).getText().trim();
+				System.out.println("Table Value: "+name);
+				if(name.contains("Invoice Status"))
+				{
+					List<WebElement> TblRows = driver.findElements(By.xpath(InvoiceTblRows));
+					for(int j=0;j<TblRows.size();j++){							
+						Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, InvoiceStatusDropDown, Excel_Handling.Get_Data(TC_ID, "InvoiceFilterStatus"), "Invoice Status Drop down");
+						String PaidLink = driver.findElement(By.xpath(InvoiceTblRows+"["+(j+1)+"]/td["+(i+1)+"]")).getText().trim();
+						System.out.println("RecordName: "+PaidLink);
+						String InvoiceFilter = Excel_Handling.Get_Data(TC_ID, "InvoiceFilterStatus").trim();
+						switch(InvoiceFilter){						
+						case "Paid":
+							        if(PaidLink.contains("Paid"))
+							        {
+								    Extent_Reporting.Log_Pass("Record Is in :"+PaidLink+" Status", "Passed");							
+									}else{
+										Extent_Reporting.Log_Fail("Filter Option Not working as expecetd", "Failed", driver);
+									}	
+							        break;
+						case "Pending":
+							 		if(PaidLink.contains("Pending"))
+							 		{
+							 			Extent_Reporting.Log_Pass("Record Is in :"+PaidLink+" Status", "Passed");							
+							 		}else{
+									Extent_Reporting.Log_Fail("Filter Option Not working as expecetd", "Failed", driver);
+							 		}								
+							 		break;	
+						case "All":
+									if(PaidLink.contains("Unpaid")||PaidLink.contains("paid"))
+							 		{
+							 			Extent_Reporting.Log_Pass("First Record Is in :"+PaidLink+" Status", "Passed");							
+							 		}else{
+									Extent_Reporting.Log_Fail("Filter Option Not working as expecetd", "Failed", driver);
+							 		}								
+							 		break;
+						}
+						int temp = j+1;
+						if(temp==(TblRows.size()))
+						{
+							break;
+						}
+						if(temp==5)
+						{
+							break;
+						}
+						System.out.println("j"+ j);
+							
+					}				
+					Extent_Reporting.Log_Pass("Invoice Pay Header ", "Passed");			
+					Extent_Reporting.Log_report_img("Header Tab is exist", "ScreenShot", driver);
+					break;					
+				}
+				if(i==ChannelsCnt){
+					Extent_Reporting.Log_Fail("Invoice Pay Status Header does not exist", "Failed", driver);
+				}
+			}
+		}catch(Exception e){
+			Extent_Reporting.Log_Fail("Respective Header does not exists",	"Failed",driver);
+			Log.error("Tab does not exist");
+			e.printStackTrace();
+			throw new Exception("Tab does not exist");
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	public void Credit_cardProvidingValues() throws Exception{
 		try{		   		   
@@ -457,7 +819,8 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 				DynamicSinglepage_field();	
 				sumbitBtn();
 				SinglePager_PaymentPage_BusinessLogic AirPay_Local = new SinglePager_PaymentPage_BusinessLogic(driver, TC_ID);
-				AirPay_Local.Card_Details_Options();			
+				AirPay_Local.Card_Details_Options();	
+				
 				if(AirPay_Local.SandBoxMode("You are in Sandbox mode (Your account will not be charged)")==true)
 				{
 					Credit_cardProvidingValues();
@@ -679,6 +1042,117 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 		}
 	}
 	
+	
+	public void InvoiceSinglePendingtransaction() throws Exception{
+		try{			
+			Set<String> handles = driver.getWindowHandles();
+			browser =	handles.toArray(new String[0]);
+			System.out.println("Number of browsers opened are"+ browser.length);
+			for (int i=0; i<handles.size();i++)
+			{
+				try
+				{
+					driver.switchTo().window(browser[i]);
+					System.out.println(driver.getTitle());
+					child =driver.getCurrentUrl();
+					if(child.contains(MAPanelWindow)){
+						System.out.println(driver.getTitle()+"found");
+						if(Assert.isElementDisplayed(driver, InvoiceLogo, "Image Logo"))
+						{
+							Assert.Verify_Image(driver, InvoiceLogo, "Airpay Logo");									
+							Extent_Reporting.Log_report_img("Screen Print", "Passed", driver);
+							Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, "//select[@id='paymethodselect']", Excel_Handling.Get_Data(TC_ID, "Payment_Mode").trim(), "PayMethod");
+							Extent_Reporting.Log_Pass("Pay Method selected as: "+Excel_Handling.Get_Data(TC_ID, "Payment_Mode").trim(), "Passed");			
+							InvoiceTermsAndCondition_Field();
+							InvoiceTermsAndConditionChkPay_Field();
+							SinglePager_PaymentPage_BusinessLogic AirPay_Local = new SinglePager_PaymentPage_BusinessLogic(driver, TC_ID);
+							AirPay_Local.Card_Details_Options();
+							if(AirPay_Local.SandBoxMode("You are in Sandbox mode (Your account will not be charged)")==true)
+							{
+								Credit_cardProvidingValues();
+								AirPay_Local.InvoiceCash_paymentSuccessMesg();
+							}else{
+								AirPay_Local.FooterVerify();
+								AirPay_Local.InvoiceFailedTransaction();					
+							}
+						}else{
+							Extent_Reporting.Log_Fail("Image Logo does not exist", "Failed", driver);
+						}
+						
+						break;
+					}
+				}
+				catch(Throwable t)
+				{
+					System.out.println("Browser not opened");
+				}
+			}		
+			
+			
+		}catch(Exception t){
+			t.printStackTrace();
+			Extent_Reporting.Log_Fail("Image Logo is exist for :"+title, "Failed", driver);
+			throw new Exception("Image panel page issue");
+		}
+	}
+	
+	
+	public static String TransactionName = "";
+	public static String InvoicNumber="";
+	public void InvoiceSingleExtendTransaction() throws Exception{
+		try{			
+			Set<String> handles = driver.getWindowHandles();
+			browser =	handles.toArray(new String[0]);
+			System.out.println("Number of browsers opened are"+ browser.length);
+			for (int i=0; i<handles.size();i++)
+			{
+				try
+				{
+					driver.switchTo().window(browser[1]);
+					System.out.println(driver.getTitle());
+						System.out.println(driver.getTitle()+"found");
+						if(Assert.isElementDisplayed(driver, InvoiceLogo, "Image Logo"))
+						{
+							Assert.Verify_Image(driver, InvoiceLogo, "Airpay Logo");
+							TransactionName = driver.findElement(By.xpath(InvoiceActualName)).getText().trim();
+							InvoicNumber = driver.findElement(By.xpath(InvoiceNo)).getText().split(" ")[2].trim();			
+							Extent_Reporting.Log_report_img("Screen Print", "Passed", driver);
+							if(Assert.isElementDisplay(driver, "//select[@id='paymethodselect']")){
+							Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, "//select[@id='paymethodselect']", Excel_Handling.Get_Data(TC_ID, "Payment_Mode").trim(), "PayMethod");
+							}
+							Extent_Reporting.Log_Pass("Pay Method selected as: "+Excel_Handling.Get_Data(TC_ID, "Payment_Mode").trim(), "Passed");			
+							InvoiceTermsAndCondition_Field();
+							InvoiceTermsAndConditionChkPay_Field();
+							SinglePager_PaymentPage_BusinessLogic AirPay_Local = new SinglePager_PaymentPage_BusinessLogic(driver, TC_ID);
+							AirPay_Local.Card_Details_Options();
+							if(AirPay_Local.SandBoxMode("You are in Sandbox mode (Your account will not be charged)")==true)
+							{
+								Credit_cardProvidingValues();
+								AirPay_Local.InvoiceCashExtendPaymentCash();
+								break;
+							}else{
+								AirPay_Local.FooterVerify();
+								AirPay_Local.InvoiceFailedTransaction();
+								
+							}
+						}else{
+							Extent_Reporting.Log_Fail("Image Logo does not exist", "Failed", driver);
+						}
+				}
+				catch(Throwable t)
+				{
+					System.out.println("Browser not opened");
+				}
+			}		
+			
+			
+		}catch(Exception t){
+			t.printStackTrace();
+			Extent_Reporting.Log_Fail("Image Logo is exist for :"+title, "Failed", driver);
+			throw new Exception("Image panel page issue");
+		}
+	}
+	
 	public void DynamicSinglepage_field() throws Exception{
 		try{
 			if(Assert.isElementDisplay(driver, SubmitBtn))
@@ -694,7 +1168,7 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 				Select select =new Select(selectDropBox1);
 				List<WebElement> optionValue = select.getOptions();
 				System.out.println("DropDown Size: "+optionValue.size());	
-				Assert.selectDropBoxValue(driver, SelectDropDown+"["+i+"]", 2, "Drop Down");//(driver, Netbank_DropDown, value[i], value[i+1]+" Bank ");			
+				Assert.selectDropBoxValue(driver, SelectDropDown+"["+i+"]", 1, "Drop Down");//(driver, Netbank_DropDown, value[i], value[i+1]+" Bank ");			
 				Extent_Reporting.Log_Pass("Text Area Entered", "Passed");
 				Extent_Reporting.Log_report_img("All fields Entered", "Passed", driver);		
 			}	
@@ -749,6 +1223,252 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 			throw new Exception("Test failed due to Logo does not displayed");
 		}
 	}
+	
+	public void InvoicePendingViewIcon() throws Throwable {
+		try{ 
+			Log.info("Navigating To Payment Page");	
+			Assert.waitForPageToLoad(driver);	
+			Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, InvoiceStatusDropDown, Excel_Handling.Get_Data(TC_ID, "InvoiceFilterStatus"), "Invoice Status Drop down");
+			Thread.sleep(3000);
+			Extent_Reporting.Log_report_img("Invoice pay is in "+Excel_Handling.Get_Data(TC_ID, "InvoiceFilterStatus"), "Passed", driver);
+			Assert.Javascriptexecutor_forClick(driver, InvoiceEyeIcon, "InvoiceEyeIcon pay");
+		}catch(Exception e){
+			Extent_Reporting.Log_Fail("Respective Header does not exists",	"Failed",driver);
+			Log.error("Tab does not exist");
+			e.printStackTrace();
+			throw new Exception("Tab does not exist");
+		}
+	}
+	
+	
+	public void InvoiceSettingMenuLink() throws Throwable {
+		try{ 
+			Log.info("Navigating To Payment Page");	
+			Assert.waitForPageToLoad(driver);
+			Assert.Javascriptexecutor_forClick(driver, SettingsOption, "Invoice Settings");			
+			Assert.inputText(driver, InvoiceExpiredField, " ", "Blank Entered");
+			Assert.Javascriptexecutor_forClick(driver, ExportSubmitBtn, "Invoice expiry Submit button");
+			Assert.isElementDisplayed(driver, ErrorMsg, "Error Message");		
+			Extent_Reporting.Log_report_img("Invoice pay is in ", "Passed", driver);
+			Assert.inputText(driver, InvoiceExpiredField, "-1", "Blank Entered");
+			Assert.Javascriptexecutor_forClick(driver, ExportSubmitBtn, "Invoice expiry Submit button");
+			Assert.isElementDisplayed(driver, ErrorMsg, "Error Message");
+			Extent_Reporting.Log_report_img("Invoice pay is in ", "Passed", driver);
+			Assert.inputText(driver, InvoiceExpiredField, Excel_Handling.Get_Data(TC_ID, "InvoiceExpiryHrs"), "Invoice Expiry in Hours");
+			Thread.sleep(3000);
+			Extent_Reporting.Log_report_img("Invoice pay is in ", "Passed", driver);
+			Assert.Javascriptexecutor_forClick(driver, ExportSubmitBtn, "Invoice expiry Submit button");
+		}catch(Exception e){
+			Extent_Reporting.Log_Fail("Respective Header does not exists",	"Failed",driver);
+			Log.error("Tab does not exist");
+			e.printStackTrace();
+			throw new Exception("Tab does not exist");
+		}
+	}
+	
+	public void InvoiceExpirySuccessMsg() throws Throwable {
+		try{ 
+			Log.info("Navigating To Payment Page");	
+			if(Assert.isElementDisplayed(driver, ExpiryDateMsg, "Expiry Message"))
+			{
+				
+				Extent_Reporting.Log_Pass("Success message is displayed", "passed");
+				Extent_Reporting.Log_report_img("Success Message", "passed", driver);
+			}else{
+				Extent_Reporting.Log_Fail("Respective Success Message does not exists",	"Failed",driver);
+			}
+			
+		}catch(Exception e){
+			Extent_Reporting.Log_Fail("Respective Success Message does not exists",	"Failed",driver);
+			Log.error("Tab does not exist");
+			e.printStackTrace();
+			throw new Exception("Tab does not exist");
+		}
+	}
+	
+	
+	
+	public void InvoiceUnpaidStatus() throws Exception {
+		try{ 
+			if(Assert.isElementDisplayed(driver, InvoicependingStatus, "Transaction Status"))
+			{
+				Extent_Reporting.Log_Pass("Record is in pending only", "Passed");
+				Extent_Reporting.Log_report_img("Screen print", "Passed", driver);
+				String CreatedDate = driver.findElement(By.xpath(InvoiceCreatedDate)).getText().split(",")[1].trim();
+				String Substring = CreatedDate.substring(0, 3).trim();
+				System.out.println(Substring);
+				Date date = new SimpleDateFormat("MMM").parse(Substring);//put your month name here
+			    Calendar cal = Calendar.getInstance();
+			    cal.setTime(date);
+			    int monthNumber=cal.get(Calendar.MONTH)+1;
+			    System.out.println(monthNumber);		    
+			    
+			    String invoiceStatus = driver.findElement(By.xpath(InvoicependingStatus)).getText().trim();
+			    if(invoiceStatus.equalsIgnoreCase("pending"))
+			    {
+			    	Extent_Reporting.Log_Pass("Status is in pending only as expecetd", "Passed"); 
+			     }else if(invoiceStatus.equalsIgnoreCase("Paid"))
+			     {
+				    	Extent_Reporting.Log_Pass("Status is in Paid only as expecetd", "Passed"); 
+			     }else{
+				    	Extent_Reporting.Log_Fail("Status does not exist as expecetd", "Passed",driver); 
+			     }		        
+			}else{
+				Extent_Reporting.Log_Fail("Record does not exist", "Failed", driver);
+			}
+		}catch(Exception e){
+			Extent_Reporting.Log_Fail("Respective Header does not exists",	"Failed",driver);
+			Log.error("Tab does not exist");
+			e.printStackTrace();
+			throw new Exception("Tab does not exist");
+		}
+	}
+	
+	
+	public void TanishqPendingStatus() throws Exception {
+		try{ 
+			if(Assert.isElementDisplayed(driver, TanishqInvoiceStatus, "Transaction Status"))
+			{		    
+			    String invoiceStatus = driver.findElement(By.xpath(TanishqInvoiceStatus)).getText().trim();
+			    if(invoiceStatus.equalsIgnoreCase("pending"))
+			    {
+			    	Extent_Reporting.Log_Pass("Status is in "+invoiceStatus , "Passed"); 
+			     }else if(invoiceStatus.equalsIgnoreCase("Paid"))
+			     {
+				    	Extent_Reporting.Log_Pass("Status is in "+ invoiceStatus , "Passed"); 
+			     }else{
+				    	Extent_Reporting.Log_Fail("Status does not exist as expecetd", "Passed",driver); 
+			     }		        
+			}else{
+				Extent_Reporting.Log_Fail("Record does not exist", "Failed", driver);
+			}
+		}catch(Exception e){
+			Extent_Reporting.Log_Fail("Respective Header does not exists",	"Failed",driver);
+			Log.error("Tab does not exist");
+			e.printStackTrace();
+			throw new Exception("Tab does not exist");
+		}
+	}
+	
+	public static String InvoiceNub="";
+	public void InvoicePendingExtendUpdate() throws Throwable {
+		try{ 
+			if(Assert.isElementDisplayed(driver, InvoicependingStatus, "Transaction Status"))
+			{
+				Extent_Reporting.Log_Pass("Record is in pending only", "Passed");
+				Extent_Reporting.Log_report_img("Screen print", "Passed", driver);
+				String expiredYear = driver.findElement(By.xpath(expiredOnDate)).getAttribute("value").trim().split(",")[0].trim();
+				System.out.println("expiredOn: "+expiredYear);								
+				String CreatedDate = driver.findElement(By.xpath(expiredOnDate)).getAttribute("value").trim().split(",")[1].trim();
+				String Substring = CreatedDate.substring(0, 3).trim();
+				String DateSubstring = CreatedDate.substring(4, 6).trim();
+				System.out.println(Substring);
+				System.out.println(DateSubstring);
+				Date date = new SimpleDateFormat("MMM").parse(Substring);//put your month name here
+			    Calendar cal = Calendar.getInstance();
+			    cal.setTime(date);
+			    InvoiceNub = driver.findElement(By.xpath(InvoiceNumberpending)).getText().trim();
+			    int monthNumber=cal.get(Calendar.MONTH)+1;
+			    System.out.println(monthNumber);			    
+				String Currentyear = new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime());
+			    System.out.println("SystemDate: "+Currentyear);		    
+			    if(Integer.parseInt(expiredYear)>=Integer.parseInt(Currentyear))
+			    {
+			    	System.out.println("Same year exis");
+					String CurrentMonth = new SimpleDateFormat("MM").format(Calendar.getInstance().getTime());
+					System.out.println("currentMonth: "+CurrentMonth);
+					if(monthNumber>=Integer.parseInt(CurrentMonth))
+					{
+						System.out.println("Same month");						
+						String CurrentDate = new SimpleDateFormat("dd").format(Calendar.getInstance().getTime());
+						if(Integer.parseInt(DateSubstring)>=Integer.parseInt(CurrentDate)){
+							
+							System.out.println("Same date exis");
+							InvocieLink();	
+						}else{
+							System.out.println("Date got expired");
+							Thread.sleep(2000);
+							Assert.Clickbtn(driver, expiredOnDate, "Click Date");
+							
+							WebDriverWait wait=new WebDriverWait(driver, 20);
+							WebElement guru99seleniumlink;
+							guru99seleniumlink= wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(DatePopup)));
+							guru99seleniumlink.isDisplayed();
+							
+							//((JavascriptExecutor)driver).executeScript("arguments[0].value=arguments[1]", expiredOnDate, "15-Mar-2019, 12:00 am");							
+							Thread.sleep(5000);
+							Assert.Javascriptexecutor_forClick(driver, NextupdatedDate, "Next Extend Date");
+							Assert.Clickbtn(driver, NextupdatedDateDonebtn, "Done button");	
+						    InvocieLink();	        
+						}	
+					}else{
+						System.out.println("Month got Expired");
+						Thread.sleep(2000);
+						Assert.Clickbtn(driver, expiredOnDate, "Click Date");
+						WebDriverWait wait=new WebDriverWait(driver, 20);
+						WebElement guru99seleniumlink;
+						guru99seleniumlink= wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(DatePopup)));
+						guru99seleniumlink.isDisplayed();
+						
+						//((JavascriptExecutor)driver).executeScript("arguments[0].value=arguments[1]", expiredOnDate, "15-Mar-2019, 12:00 am");							
+
+						Thread.sleep(5000);
+						Assert.Javascriptexecutor_forClick(driver, NextupdatedDate, "Next Extend Date");
+						
+						Assert.Clickbtn(driver, NextupdatedDateDonebtn, "Done button");
+					    InvocieLink();	        
+					}					
+			    }else{
+			    	System.out.println("Year got Expired");
+					Thread.sleep(2000);
+					//Assert.Clickbtn(driver, expiredOnDate, "Click Date");
+					
+					WebDriverWait wait=new WebDriverWait(driver, 20);
+					WebElement guru99seleniumlink;
+					guru99seleniumlink= wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(DatePopup)));
+					guru99seleniumlink.isDisplayed();
+					//Thread.sleep(5000);
+					//((JavascriptExecutor)driver).executeScript("arguments[0].value=arguments[1]", expiredOnDate, "15-Mar-2019, 12:00 am");							
+
+			    	Assert.Javascriptexecutor_forClick(driver, NextupdatedDate, "Next Extend Date");
+					Assert.Javascriptexecutor_forClick(driver, NextupdatedDateDonebtn, "Done button");
+				    InvocieLink();	        
+			    }
+			}else{
+				Extent_Reporting.Log_Fail("Record does not exist", "Failed", driver);
+			}
+		}catch(Exception e){
+			Extent_Reporting.Log_Fail("Respective Header does not exists",	"Failed",driver);
+			Log.error("Tab does not exist");
+			e.printStackTrace();
+			throw new Exception("Tab does not exist");
+		}
+	}
+	
+	
+	public void InvocieLink() throws Exception{
+		try{
+			if(Assert.isElementDisplayed(driver, InvoiceTabLink, "Invoice tab")){
+				
+				Assert.Clickbtn(driver, InvoiceTabLink, "Invoice Tab link");
+				Assert.inputText(driver, InvoiceFilter, InvoiceNub, "Invoice Number");
+				Assert.clickButton(driver, InvoiceFilter, "Keys Enter");
+				InvoicePending();
+				InvoiceSingleExtendTransaction();
+				InvoiceExtendCrossVerify();
+				
+			}
+			
+			
+			
+		}catch(Exception e){
+			Extent_Reporting.Log_Fail("Respective Header does not exists",	"Failed",driver);
+			Log.error("Tab does not exist");
+			e.printStackTrace();
+			throw new Exception("Tab does not exist");
+		}
+	}
+	
 
 
 }

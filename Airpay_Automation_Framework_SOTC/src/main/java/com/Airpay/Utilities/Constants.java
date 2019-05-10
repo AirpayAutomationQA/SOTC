@@ -7,6 +7,8 @@ public class Constants {
 	public static final String datasheetPath =System.getProperty("user.dir")+"\\AirPayTestData\\TestData\\";
 	public static final String reportPath =System.getProperty("user.dir")+"\\AirPayTestData\\Result\\Graphical Reporting\\HTML\\Summery.html";
 	public static final String snapshotsPath = System.getProperty("user.dir")+"\\AirPayTestData\\Result\\Graphical Reporting\\Sanpshots\\";
+	//public static final String reportPath ="Z:\\Airpay_Automation_Reports\\Result\\Graphical Reporting\\HTML\\Summery.html";
+	//public static final String snapshotsPath = "Z:\\Airpay_Automation_Reports\\Result\\Graphical Reporting\\Sanpshots\\";
 	public static final String deleteAllTempFileBatchlocation = System.getProperty("user.dir")+"\\src\\test\\java\\DeleteAllTemporaryFiles.bat";
 	public static String Resultfilename ="";
 	

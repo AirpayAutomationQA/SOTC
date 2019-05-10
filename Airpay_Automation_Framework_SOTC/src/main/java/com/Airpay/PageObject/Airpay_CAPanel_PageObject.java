@@ -66,6 +66,11 @@ public class Airpay_CAPanel_PageObject {
 			
     //******************************************** Invoice pay ***************************************
 			public static final String InvoiceLogo ="//img[@class='img_style' or @src='https://payments.invoicepay.co.in/uploads/531/logo_1549967156.png' or @class='main-logo']";	
+			public static final String TanishqLogo ="//img[@alt='Nowpay']";	
+
+			
+			
+			
 			public static final String InvoicePageFirstName ="//input[@class='form-control' and @id='FIRST_NAME']";	
 			public static final String InvoicePageLastName ="//input[@class='form-control' and @id='LAST_NAME' and @name='LAST_NAME']";	
 			public static final String InvoiceEmail ="//input[@class='form-control' and @id='LAST_NAME' and @name='EMAIL']";	
@@ -105,11 +110,69 @@ public class Airpay_CAPanel_PageObject {
 			public static final String ChooseLink ="//a[@class='file-input-wrapper btn btn-default ']";
 			public static final String InvoiceSendMail ="//select[@id='InvoiceImport_send_email']";
 			public static final String InvoiceSendSMS ="//select[@id='InvoiceImport_send_sms']";
+
+			public static final String Invoicetable ="(//table/thead/tr/th)";
+			public static final String InvoiceStatusDropDown ="//select[@id='Invoice_INVOICE_STATUS']";
+			public static final String InvoiceEmpty ="//span[@class='empty']";
+			public static final String InvoiceTblRows ="(//table/tbody/tr)";
+			
+			public static final String InvoiceNumberEnter ="//input[@id='Invoice_INVOICE_ID' and @class='form-control searchid']";
+			public static final String InvoiceEyeIcon ="(//*[@class='glyphicon glyphicon-eye-open'])[1]";
+
+			
+			public static final String InvoicependingStatus ="(//*[text()='Invoice Status']//following::td)[1]";
+			public static final String InvoiceCreatedDate ="(//*[text()='Created On']//following::td)[1]";
+
+			
+			
+			public static final String InvoiceExpiredOn ="//input[@class='form-control hasDatepicker']";
+			public static final String InvoiceSettingLink ="//a[@href='/site/settings']";
+			
+			public static final String InvoiceExpiredField ="//input[@id='Company_EXPIRED_ON']";
 			public static final String ExportSubmitBtn ="//input[@class='btn btn-primary lg-btn']";
+			public static final String ExpiryDateMsg ="//*[text()='Expiry date in hours updated successfully.']";
+			public static final String SettingsOption ="//a[text()='Settings']";
+			public static final String ErrorMsg ="//div[@class='errorMessage']";
+			public static final String expiredOnDate ="//input[@id='expired_on']";
+			public static final String NextupdatedDate ="(//a[contains(@class,'ui-state-default ui-state-highlight ui-state-active')]//following::td/a)[1]";
+			public static final String NextupdatedDateDonebtn ="//button[text()='Done']";
+			public static final String InvoiceNumberpending ="(//*[text()='Invoice Number']//following::td)[1]";
+			public static final String InvoiceTabLink ="//a[text()='Invoices']";
+			public static final String InvoiceFilter ="//input[@id='Invoice_INVOICE_NUMBER' and @class='form-control searchid']";
+			public static final String DatePopup ="//div[@id='ui-datepicker-div']";
+
+			//***************************************** Tanishq pay test cases *****************************
+			public static final String TanishqDateOfGeneration ="(//*[text()='Date of Generation']//following::td)[1]";
+			public static final String TanishqExpiryLinkDate ="(//*[text()='Payment Link Valid Upto']//following::td)[1]";
+			public static final String TanishqInvoiceStatus ="(//*[text()='Invoice Status']//following::td)[1]";
+			public static final String ManualTanishqBtn ="//*[@class='dropdown-toggle btn btn-primary md-btn']";
+			public static final String DownLoadManual ="//a[text()='Download Manual']";
+			public static final String ViewManual="//a[text()='View Manual']";
+
+
+			
+			
+			
+			
+			
+			
+
+			
+
+			
+			
+			
+			
+			
+
+			
+
+			
 
 			
 			
 
+			
 			
 			
 			

@@ -5,7 +5,6 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
 import com.Airpay.BusinessLogic.SOTC_Application_BusinessLogic;
-import com.Airpay.BusinessLogic.SinglePager_PaymentPage_BusinessLogic;
 import com.Airpay.InitialSetup.Driver_Setup;
 import com.Airpay.Utilities.Log;
 
