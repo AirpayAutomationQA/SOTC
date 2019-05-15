@@ -483,10 +483,11 @@ public class SinglePager_PaymentPage_BusinessLogic extends Airpay_PaymentPage_Pa
 			{
 				Extent_Reporting.Log_Pass("Repective  Message is exist", " Msg is:"+errMsg);
 				Extent_Reporting.Log_report_img("Respective  Message is exist", "Passed", driver);	
-				
+				return true;
 			}else
 			{	
 				Extent_Reporting.Log_Fail("Repective  Message does not exist", " Msg is:"+errMsg, driver);
+				return false;
 			}		
 		}                     
 		catch(Exception e)	
@@ -496,7 +497,6 @@ public class SinglePager_PaymentPage_BusinessLogic extends Airpay_PaymentPage_Pa
 			e.printStackTrace();
 			throw new Exception("Test failed due to local host page not displayed");
 		}
-		return true;
 	}
 	public void Verify_PaymentPageFields() throws Exception {
 		try{ 
