@@ -100,15 +100,23 @@ public class Student_Report_PageObject
 	public static final String GenerateInvoice ="//a[@href='generateinvoice.php']";
 	public static final String PaytypeDropDown ="//select[@id='paytype']";
 	public static final String PaytypesubmitBtn ="//input[@type='submit']";
+	public static final String ExcelPiadDownload = "//img[@src='resources/images/excel.png']";
+	
+	public static final String AddMoreBtn ="//button[@class='btn btn-warning']";
+	public static final String  AddanotherFeename = "//input[@id='feename1']";
+	public static final String  AddanotherFeeValue = "//input[@id='feevalue1']";
+	public static final String  PaymentDurationDropDown = "//select[@id='selpayduration1']";
+	public static final String AddQuarterDrop ="//select[@id='selpayquarter1']";
+	public static final String addPmtStartDate = "//input[@id='psd1']";
+	public static final String addPmtEndDate = "//input[@id='ped1']";
+	public static final String addPaymentLateFeesRadiobtn = "//input[@name='late_fee1' and @value='Y']";
+	public static final String addlateFeesInput = "//input[@id='late_fee_amount1']";
+
 
 	
 
 	
-	
 
-
-	
-	
 	
 	
 	

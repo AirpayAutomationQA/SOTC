@@ -116,10 +116,8 @@ public class Create_TestNGXML {
 	        FileWriter fw = new FileWriter(f.getAbsoluteFile());
 	        BufferedWriter bw = new BufferedWriter(fw);
 	        bw.write(suite.toXml());
-	        bw.close();
-	        
-	        suites.add(f.getPath());
-	        
+	        bw.close();        
+	        suites.add(f.getPath());	        
 	        testNG.setTestSuites(suites);
 	        com.Airpay.Reporting.Report_Setup.InitializeReport(key);
 	        testNG.run();

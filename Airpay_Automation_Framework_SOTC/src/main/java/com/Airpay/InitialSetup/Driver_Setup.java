@@ -1,10 +1,14 @@
 package com.Airpay.InitialSetup;
 
 
+import java.util.HashMap;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -43,12 +47,24 @@ public class Driver_Setup {
 	}
 
 	public WebDriver initChromeDriver(String appURL) throws InterruptedException {
-		//driver.get("chrome://settings/clearBrowserData");
-		
+		//driver.get("chrome://settings/clearBrowserData");		
 		System.out.println("Launching google chrome driver!!! .");
 		System.setProperty("webdriver.chrome.driver", driverPath
 				+ "chromedriver.exe");
-		driver = new ChromeDriver();
+		//driver = new ChromeDriver();
+		String downloadFilepath = System.getProperty("user.dir")+"\\AirPayTestData\\config\\";
+    	HashMap<String, Object> chromePrefs = new HashMap<String, Object>();
+    	chromePrefs.put("profile.default_content_settings.popups", 0);
+    	chromePrefs.put("download.default_directory", downloadFilepath);
+    	ChromeOptions options = new ChromeOptions();
+    	HashMap<String, Object> chromeOptionsMap = new HashMap<String, Object>();
+    	options.setExperimentalOption("prefs", chromePrefs);
+    	options.addArguments("--test-type");
+    	DesiredCapabilities cap = DesiredCapabilities.chrome();
+    	cap.setCapability(ChromeOptions.CAPABILITY, chromeOptionsMap);
+    	cap.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+    	cap.setCapability(ChromeOptions.CAPABILITY, options);
+    	driver = new ChromeDriver(cap);	
 		driver.manage().window().maximize();
 		//driver.navigate().to("chrome://settings/clearBrowserData");
 		Thread.sleep(5000);
