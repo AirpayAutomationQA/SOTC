@@ -12,4 +12,18 @@
       <class name="com.Airpay.Tests.Create_Individual_Invoice_Creation_test"/>
     </classes>
   </test> <!-- TC_ID_Create_Individual_Invoice -->
+  <test name="TC_ID_Create_Individual_Invoice(failed)">
+    <parameter name="appURL" value="http://localhost/airpay_php/transaction.html"/>
+    <parameter name="tcID" value="TC_ID_Create_Individual_Invoice"/>
+    <parameter name="browserType" value="Chrome"/>
+    <classes>
+      <class name="com.Airpay.Tests.Create_Individual_Invoice_Creation_test">
+        <methods>
+          <include name="initializeTestBaseSetup"/>
+          <include name="tearDown"/>
+          <include name="TestCase_Login"/>
+        </methods>
+      </class> <!-- com.Airpay.Tests.Create_Individual_Invoice_Creation_test -->
+    </classes>
+  </test> <!-- TC_ID_Create_Individual_Invoice(failed) -->
 </suite> <!-- Failed suite [Airpay] -->

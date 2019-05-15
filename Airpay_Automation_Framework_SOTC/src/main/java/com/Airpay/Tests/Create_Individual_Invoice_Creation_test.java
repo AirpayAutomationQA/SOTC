@@ -29,8 +29,7 @@ public class Create_Individual_Invoice_Creation_test extends Driver_Setup
 	{
 		Create_Activity_BusinessLogic create_act=new Create_Activity_BusinessLogic(driver, tcID);
 		create_act.Login("admin username","admin password");		
-		Student_Report_BuninessLogic stu_report=new Student_Report_BuninessLogic(driver, TC_ID);		
-		
+		Student_Report_BuninessLogic stu_report=new Student_Report_BuninessLogic(driver, TC_ID);				
 		if(stu_report.approvalStatus()) 
 		{
 			stu_report.SearchSchoolName();			
@@ -49,8 +48,7 @@ public class Create_Individual_Invoice_Creation_test extends Driver_Setup
 			stu_report.check_Payment_details();
 			stu_report.Credit_cardValidation();
 			stu_report.check_success_payment();
-			stu_report.check_paid_transaction(create_act);
-			
+			stu_report.check_paid_transaction(create_act);			
 		}
 		else
 		{

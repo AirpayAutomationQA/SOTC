@@ -1,9 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite guice-stage="DEVELOPMENT" verbose="2" name="Failed suite [Main Test Suite]">
-  <test name="TestNG Test Group1">
+<suite guice-stage="DEVELOPMENT" name="Failed suite [Airpay]">
+  <parameter name="appURL" value="http://localhost/airpay_php/transaction.html"/>
+  <parameter name="tcID" value="TC_ID_Create_Individual_Invoice"/>
+  <parameter name="browserType" value="Chrome"/>
+  <test name="TC_ID_Create_Individual_Invoice">
+    <parameter name="appURL" value="http://localhost/airpay_php/transaction.html"/>
+    <parameter name="tcID" value="TC_ID_Create_Individual_Invoice"/>
+    <parameter name="browserType" value="Chrome"/>
     <classes>
-      <class name="com.Airpay.Utilities.Create_TestNGXML"/>
+      <class name="com.Airpay.Tests.Create_Individual_Invoice_Creation_test"/>
     </classes>
-  </test> <!-- TestNG Test Group1 -->
-</suite> <!-- Failed suite [Main Test Suite] -->
+  </test> <!-- TC_ID_Create_Individual_Invoice -->
+  <test name="TC_ID_Create_Individual_Invoice(failed)">
+    <parameter name="appURL" value="http://localhost/airpay_php/transaction.html"/>
+    <parameter name="tcID" value="TC_ID_Create_Individual_Invoice"/>
+    <parameter name="browserType" value="Chrome"/>
+    <classes>
+      <class name="com.Airpay.Tests.Create_Individual_Invoice_Creation_test">
+        <methods>
+          <include name="initializeTestBaseSetup"/>
+          <include name="tearDown"/>
+          <include name="TestCase_Login"/>
+        </methods>
+      </class> <!-- com.Airpay.Tests.Create_Individual_Invoice_Creation_test -->
+    </classes>
+  </test> <!-- TC_ID_Create_Individual_Invoice(failed) -->
+</suite> <!-- Failed suite [Airpay] -->

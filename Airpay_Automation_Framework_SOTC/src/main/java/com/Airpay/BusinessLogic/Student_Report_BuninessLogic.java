@@ -1,9 +1,8 @@
 package com.Airpay.BusinessLogic;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -11,14 +10,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import com.Airpay.PageObject.Student_Report_PageObject;
 import com.Airpay.Reporting.Extent_Reporting;
 import com.Airpay.TestData.Excel_Handling;
+import com.Airpay.TestData.OpenCSVReader;
 import com.Airpay.Utilities.ElementAction;
 import com.Airpay.Utilities.Log;
-
-import net.sourceforge.htmlunit.corejs.javascript.regexp.SubString;
 
 public class Student_Report_BuninessLogic extends Student_Report_PageObject
 {
@@ -142,12 +139,10 @@ public class Student_Report_BuninessLogic extends Student_Report_PageObject
 			{
 				Extent_Reporting.Log_Pass("Configuration Menu is exist asexpected", "Passed");
 				Assert.Clickbtn(driver, ConfigurationMenu, "Configuration Menu");
-				DateFormat dateFormat = new SimpleDateFormat("MMMM dd yyyy");
-				  java.util.Date date = new java.util.Date();
-				  System.out.println("Current Date : "+dateFormat.format(date));
-				  String midDaynumb = dateFormat.format(date);
-				  String Day = midDaynumb.substring(5, 6);
-				  System.out.println("Day "+Day);
+				Calendar cal = Calendar.getInstance();
+			    int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+			    String Day = Integer.toString(dayOfMonth).trim();
+			    System.out.println(Day);
 				 Assert.Clickbtn(driver, SchoolPayTab, "School pay Setting");
 				 Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, SelectInvoiceDayDrop, Day, "Day Number");
 				 Assert.Clickbtn(driver, SetDateSaveBtn, "save button");			 
@@ -255,6 +250,46 @@ public class Student_Report_BuninessLogic extends Student_Report_PageObject
 			e.printStackTrace();
 		}
 	}
+	public static String AnotherFeename="";
+	
+	public void AddAnotherCreateFeesStructure() throws Throwable{
+		try{
+			if(Assert.isElementDisplayed(driver, AddMoreBtn, "Fees Details Page"))
+			{
+				Assert.Clickbtn(driver, AddMoreBtn, "Add more Button");
+				Assert.inputText(driver, AddanotherFeename, Excel_Handling.Get_Data(TC_ID, "FeeName")+"1", "Fee Name");
+				AnotherFeename = driver.findElement(By.xpath(AddanotherFeename)).getAttribute("value").trim();
+				Assert.inputText(driver, AddanotherFeeValue, Excel_Handling.Get_Data(TC_ID, "Feevalue"), "Fee Name");
+				Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, PaymentDurationDropDown, Excel_Handling.Get_Data(TC_ID, "PaymentDuration").trim(), "Payment Duration");
+				Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, AddQuarterDrop, Excel_Handling.Get_Data(TC_ID, "Quarter").trim(), "Select Quarter");
+				Assert.Clickbtn(driver, addPmtStartDate, "payment Start Date");
+				WebDriverWait wait=new WebDriverWait(driver, 20);
+				WebElement guru99seleniumlink;
+				guru99seleniumlink= wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(DatePopup)));
+				guru99seleniumlink.isDisplayed();			
+				//((JavascriptExecutor)driver).executeScript("arguments[0].value=arguments[1]", expiredOnDate, "15-Mar-2019, 12:00 am");							
+				Thread.sleep(5000);
+				Assert.Javascriptexecutor_forClick(driver, PreviouseDate, "Next Extend Date");
+				Assert.Clickbtn(driver, addPmtEndDate, "payment End Dates");			
+				guru99seleniumlink= wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(DatePopup)));
+				guru99seleniumlink.isDisplayed();			
+				//((JavascriptExecutor)driver).executeScript("arguments[0].value=arguments[1]", expiredOnDate, "15-Mar-2019, 12:00 am");							
+				Thread.sleep(5000);
+				Assert.Javascriptexecutor_forClick(driver, PreviouseDate, "Next Extend Date");				
+				Assert.Clickbtn(driver, addPaymentLateFeesRadiobtn, "Create fees menu");
+				Assert.inputText(driver, addlateFeesInput, Excel_Handling.Get_Data(TC_ID, "lateFees"), "Fee Name");		
+				Extent_Reporting.Log_Pass("Create Fees Details is exist", "Passed");
+				Extent_Reporting.Log_report_img("Create fees", "Passed", driver);
+			}else {
+				Extent_Reporting.Log_Fail("Fees Details page does not exist", "Fail", driver);
+				
+			}		
+		}catch(Exception e) {
+			Extent_Reporting.Log_Fail("Fees Details page not exist", "Failed", driver);
+			e.printStackTrace();
+		}
+	}
+	
 
 	//to create the Invoice from submit button Function
 	public void inVoiceSubmitBtn() throws Exception
@@ -382,6 +417,114 @@ public class Student_Report_BuninessLogic extends Student_Report_PageObject
 	public static int headerPosition=0;
 	
 	public boolean check_user_recordsSample() throws Exception
+	{
+		Thread.sleep(5000);
+		boolean invoices_flag= true;
+		try 
+		{
+			Assert.Clickbtn(driver, report_menu, "Report Menu");
+			Assert.Clickbtn(driver, report_sub_menu, "Billing Sub Menu");	
+			Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, PaytypeDropDown, "Unpaid", "pay type drop down");
+			Assert.Clickbtn(driver, PaytypesubmitBtn, "Search button");
+			String log_user_name=Assert.getInputTextValue(driver, username_string, "Logged User Name");			
+			list_table_header=driver.findElements(By.xpath(table_headers));
+			list_tr_data=driver.findElements(By.xpath(table_row_count));			
+			for(int i=1;i<=table_headers.length();i++)
+			{
+				String headerName = driver.findElement(By.xpath(table_headers+"["+i+"]")).getText().trim();
+				if(headerName.equalsIgnoreCase("Fee Description"))
+				{
+					headerPosition= i;
+					System.out.println(table_row_count.length());
+					for(int j=1;j<=list_tr_data.size();j++)
+					{
+						String FeeName = driver.findElement(By.xpath(table_row_count+"["+j+"]/td["+i+"]")).getText().trim();						
+						if(FeeName.equalsIgnoreCase(Excel_Handling.Get_Data(TC_ID, "FeeName").trim()))
+						{
+							Extent_Reporting.Log_Pass("Record Found at "+j+ " Row", "Passeded");
+							Extent_Reporting.Log_report_img("record Found", "Passsed",driver);
+							FeeVal=true;
+							Assert.Clickbtn(driver, table_row_count+"["+j+"]/td["+i+"]//following::a[1]", "View Link");						
+							break;
+						}					
+					}
+					if(FeeVal){
+						break;
+					}
+				}
+				if(headerPosition==i){
+					Extent_Reporting.Log_report_img("Respective Details", "Print", driver);
+					break;
+				}
+						
+			}			
+		}catch(Exception e){
+			Extent_Reporting.Log_Fail("Invoice Records does not exist", "Failed", driver);
+
+		}
+		return invoices_flag;	
+	}
+	
+	
+	public boolean check_Merged_user_recordsSample() throws Exception
+	{
+		Thread.sleep(5000);
+		boolean invoices_flag= true;
+		try 
+		{
+			Assert.Clickbtn(driver, report_menu, "Report Menu");
+			Assert.Clickbtn(driver, report_sub_menu, "Billing Sub Menu");	
+			Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, PaytypeDropDown, "Unpaid", "pay type drop down");
+			Assert.Clickbtn(driver, PaytypesubmitBtn, "Search button");
+			String log_user_name=Assert.getInputTextValue(driver, username_string, "Logged User Name");			
+			list_table_header=driver.findElements(By.xpath(table_headers));
+			list_tr_data=driver.findElements(By.xpath(table_row_count));			
+			for(int i=1;i<=table_headers.length();i++)
+			{
+				String headerName = driver.findElement(By.xpath(table_headers+"["+i+"]")).getText().trim();
+				if(headerName.equalsIgnoreCase("Fee Description"))
+				{
+					headerPosition= i;
+					System.out.println(table_row_count.length());
+					for(int j=1;j<=list_tr_data.size();j++)
+					{
+						String FeeName = driver.findElement(By.xpath(table_row_count+"["+j+"]/td["+i+"]")).getText().trim();												
+						String AddAnotherFeeName[] = FeeName.split(",");
+						for(int k=0;k<AddAnotherFeeName.length;k++)
+						{	
+							if(AddAnotherFeeName[k].trim().equalsIgnoreCase(Excel_Handling.Get_Data(TC_ID, "FeeName").trim()))
+							{
+								Extent_Reporting.Log_Pass("Merged Record Found at "+j+ " Row", "Passeded");
+								Extent_Reporting.Log_report_img("record Found", "Passsed",driver);
+								FeeVal=true;
+								Assert.Clickbtn(driver, table_row_count+"["+j+"]/td["+i+"]//following::a[1]", "View Link");						
+								break;
+							}
+							if(AddAnotherFeeName.length==k)
+							{
+								Extent_Reporting.Log_Fail("Record does not exist", "Fail", driver);
+								break;
+							}
+						}	
+					}
+					if(FeeVal){
+						break;
+					}
+				}
+				if(headerPosition==i){
+					Extent_Reporting.Log_report_img("Respective Details", "Print", driver);
+					break;
+				}
+						
+			}			
+		}catch(Exception e){
+			Extent_Reporting.Log_Fail("Invoice Records does not exist", "Failed", driver);
+
+		}
+		return invoices_flag;	
+	}
+	
+	public boolean check_Mergeduser_recordsSample() throws Exception
 	{
 		boolean invoices_flag= true;
 		try 
@@ -872,24 +1015,21 @@ public class Student_Report_BuninessLogic extends Student_Report_PageObject
     	  
       }
       
-      
+      public static String pid_string="";
       public void check_invoice_detailsSample() throws Exception
       {
-    	  String [] pid = new String[no_of_invoices];
     	  boolean invoice_check_flag=false;
-    	  String[] cmp_array;
     	  try {
     	    invoice_page_url=driver.getCurrentUrl();
     		String str_to_found="pid=";
     		int pid_index=invoice_page_url.indexOf(str_to_found);
     		roll_no=Assert.getInputTextValue(driver, invoice_roll_no, "Roll No");
-    		roll_no=Assert.getInputTextValue(driver, invoice_roll_no, "Roll No");
-    		String pid_string=invoice_page_url.substring(pid_index+str_to_found.length(),invoice_page_url.length());		  
-    		  System.out.println(pid_string);
+    		//roll_no=Assert.getInputTextValue(driver, invoice_roll_no, "Roll No");
+    		pid_string=invoice_page_url.substring(pid_index+str_to_found.length(),invoice_page_url.length());		  
+    		System.out.println(pid_string);
     		String invoice_student_name=Assert.getInputTextValue(driver, invoice_details_student_name, "Stsudent Name");
     		List<WebElement> tblheader = driver.findElements(By.xpath(invoice_details_table_data));		  
-    		  for( int i =0;i<tblheader.size();i++) {
-    			  
+    		  for( int i =0;i<tblheader.size();i++) { 			  
     			  String tblHeaderDes = driver.findElement(By.xpath(invoice_details_table_data+"["+(i+1)+"]")).getText().trim();
     			 
     			  if(tblHeaderDes.contains("Description")) {
@@ -917,20 +1057,7 @@ public class Student_Report_BuninessLogic extends Student_Report_PageObject
       		{
       			invoice_total_amt=invoice_total_amt.concat(".00");
       			report_total_fees=report_total_fees.concat("0");
-      		}
-      		
-
-      		
-    		if(invoice_check_flag && report_total_fees.equals(invoice_total_amt) && student_name.equals(invoice_student_name) )
-    		{
-    			Extent_Reporting.Log_Pass("Invoice Page details are correct","Passed");
-    			Extent_Reporting.Log_report_img("Invoice Page details are correct", "Passed", driver);
-    		}
-    		else
-    		{
-    			Extent_Reporting.Log_Fail("Invoice Page details are not correct", "Failed", driver);
-    		}
-    		
+      		}  		
     	  }
     	  catch(Exception e) 
     	  {
@@ -1023,75 +1150,197 @@ public class Student_Report_BuninessLogic extends Student_Report_PageObject
     	 		Extent_Reporting.Log_Fail("Cancellation message is not correct", "Failed", driver);
     	 	}
     	 		
-     }
-      
-     
+     }    
      // THis method is used to check the receipt of the payment.
      public void check_success_payment() throws Exception
-     {
-    	 
+     {  	 
     	 String  success_Msg_text=Assert.getInputTextValue(driver, receipt_message_text, "Sucess Message");
     	 String success_msg_param=Assert.getInputTextValue(driver, receipt_success_param, "Success Parameters");
     	 String text_found="amount";
     	 System.out.println(success_msg_param);
-    	// System.out.println(success_msg_param.indexOf("amount"));
-    	 
+    	// System.out.println(success_msg_param.indexOf("amount"));   	 
     	 int index=success_msg_param.indexOf(text_found)+text_found.length()+1; 	 
     	// System.out.println(index + invoice_total_amt.length());
-
-    	 int end_index=invoice_total_amt.length();
-    	 
+    	 int end_index=invoice_total_amt.length();   	 
     	 String receipt_amt=success_msg_param.substring(index,index+end_index);
     	 System.out.println(receipt_amt);
-    	 //String success_amount= success_msg_param.substring();
-    			 
+    	 //String success_amount= success_msg_param.substring();   			 
     	 if(receipt_amt.equals(invoice_total_amt ))
     	 {
     		Extent_Reporting.Log_Pass("Payment Success with Correct Amount","Passed");
- 			Extent_Reporting.Log_report_img("Payment Success Receipt ", "Passed", driver);
- 	
+ 			Extent_Reporting.Log_report_img("Payment Success Receipt ", "Passed", driver); 	
     	 }
     	 else
     	 {
  			Extent_Reporting.Log_Fail("Payment Success with inCorrect Amount", "Failed", driver);
-
     	 }
     	 Thread.sleep(3000);
      }
-
+  public static String FileName= "";
      //This method is used to check the paid invoice from Admin login.
      public void check_paid_transaction(Create_Activity_BusinessLogic create_act) throws Exception
-     {
-    	 
+     {   	 
     	 int action_position=0;
-    	 create_act.Login("admin username","admin password");
+    	 create_act.Login("student user name","student password");
     	 Thread.sleep(2000);
     	 Assert.Clickbtn(driver, report_menu, "Report Menu");
+		 Assert.Clickbtn(driver, report_sub_menu, "Billing Sub Menu");	
+		 Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, PaytypeDropDown, "Paid", "pay type drop down");
+		 Assert.Clickbtn(driver, PaytypesubmitBtn, "Search button");
+		 list_table_header=driver.findElements(By.xpath(table_headers));
+		 list_tr_data=driver.findElements(By.xpath(table_row_count));			
+		 String records = driver.findElement(By.xpath("(//table[@class='table table-hover']/tbody/tr)/td[1]")).getText().trim();
+		 if(records.equalsIgnoreCase("No Records"))
+		 {
+			Extent_Reporting.Log_Fail("Student fees Transaction not yet paid", "Failed", driver);
+		 }else{
+			for(int i=1;i<=table_headers.length();i++)
+			{
+				String headerName = driver.findElement(By.xpath(table_headers+"["+i+"]")).getText().trim();
+				if(headerName.equalsIgnoreCase("Fee Description"))
+					{
+					headerPosition= i;
+					for(int j=1;j<=table_row_count.length();j++)
+					{
+							String FeeName = driver.findElement(By.xpath(table_row_count+"["+j+"]/td["+i+"]")).getText().trim();						
+							if(FeeName.equalsIgnoreCase(Excel_Handling.Get_Data(TC_ID, "FeeName").trim()))
+							{
+								Extent_Reporting.Log_Pass("Record Found at "+j+ " Row", "Passed");
+								Extent_Reporting.Log_report_img("record Found", "Passsed",driver);
+								FeeVal=true;
+								Assert.Clickbtn(driver, table_row_count+"["+j+"]/td["+i+"]//following::a[1]", "View Link");						
+								break;
+							}					
+						}
+						if(FeeVal){
+							break;
+						}
+					}				
+				}		
+			}
+		 if(FeeVal){
+					String PaidUrl=driver.getCurrentUrl();
+		    		String str_to_found="pid=";
+		    		int pid_index=invoice_page_url.indexOf(str_to_found);
+		    		String roll_no=Assert.getInputTextValue(driver, invoice_roll_no, "Roll No");
+		    		roll_no=Assert.getInputTextValue(driver, invoice_roll_no, "Roll No");
+		    		String paid_pid_string=invoice_page_url.substring(pid_index+str_to_found.length(),invoice_page_url.length());		  
+		    		System.out.println(paid_pid_string);		    		
+		    		if(pid_string.equalsIgnoreCase(paid_pid_string)){
+		    			Extent_Reporting.Log_Pass("Student fees paid", "Passed");
+		    			//driver.navigate().back();
+		    			Thread.sleep(2000);
+		    		}else{
+		    			Extent_Reporting.Log_Fail("Student pid is differen", "Failed", driver);
+		    		}
+		 		}			
+		 create_act.Login("School login UserName","School login PWD");
+    	 Thread.sleep(2000);				
+		 Assert.Clickbtn(driver, report_menu, "Report Menu");
     	 Assert.Clickbtn(driver, student_report_sub_menu, "Student Report Sub Menu");
     	 Assert.Clickbtn(driver, advance_search, "Advanced Search");
-
-    	 Assert.inputText(driver,roll_no_textbox , "test2", "Roll No");
-/*    	     
-    	 Select pay_status=new Select(driver.findElement(By.xpath(status)));
-    	 pay_status.selectByValue("Y");
-*/    	 Assert.Clickbtn(driver, search_button, "Search on Admin invoice");
-    	 
-    	 Thread.sleep(2000);    	 
-
-      	 List<WebElement> invoice_click=driver.findElements(By.xpath(invoce_link));
-
-      	 for(int p=0;p<invoice_click.size();p++)
-      	 {
-      		 invoice_click.get(p).click();
-      		 Thread.sleep(1000);  
-      		 String url= driver.getCurrentUrl();
-      		 
-      		 System.out.println(url);
-      		 
-      	 }
-    	 
+    	 Assert.inputText(driver,roll_no_textbox , roll_no, "Roll No");
+    	 Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, PaytypeDropDown, "Paid", "Paid Transaction");
+    	 FileName= Excel_Handling.Get_Data(TC_ID, "CSVFileName").trim();  
+    	 File file = new File(OpenCSVReader.csvFile+FileName);         
+         if(file.delete()) 
+         { 
+             System.out.println("File deleted successfully"); 
+         } 
+    	 Assert.Clickbtn(driver, search_button, "Search on Admin invoice");   	
+    	 driver.findElement(By.xpath(ExcelPiadDownload)).click();
+    	 Thread.sleep(10000);
+    	 OpenCSVReader.cSVFileVerify(pid_string);	   	 
+     }
+   
+     public void check_paid_merged_transaction(Create_Activity_BusinessLogic create_act) throws Exception
+     {   	 
+    	 int action_position=0;
+    	 create_act.Login("student user name","student password");
+    	 Thread.sleep(2000);
+    	 Assert.Clickbtn(driver, report_menu, "Report Menu");
+		 Assert.Clickbtn(driver, report_sub_menu, "Billing Sub Menu");	
+		 Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, PaytypeDropDown, "Paid", "pay type drop down");
+		 Assert.Clickbtn(driver, PaytypesubmitBtn, "Search button");
+		 list_table_header=driver.findElements(By.xpath(table_headers));
+		 list_tr_data=driver.findElements(By.xpath(table_row_count));			
+		 String records = driver.findElement(By.xpath("(//table[@class='table table-hover']/tbody/tr)/td[1]")).getText().trim();
+		 if(records.equalsIgnoreCase("No Records"))
+		 {
+			Extent_Reporting.Log_Fail("Student fees Transaction not yet paid", "Failed", driver);
+		 }else{
+			for(int i=1;i<=table_headers.length();i++)
+			{
+				String headerName = driver.findElement(By.xpath(table_headers+"["+i+"]")).getText().trim();
+				if(headerName.equalsIgnoreCase("Fee Description"))
+					{
+					headerPosition= i;
+					for(int j=1;j<=list_tr_data.size();j++)
+					{
+						String FeeName = driver.findElement(By.xpath(table_row_count+"["+j+"]/td["+i+"]")).getText().trim();												
+						String AddAnotherFeeName[] = FeeName.split(",");
+						for(int k=0;k<AddAnotherFeeName.length;k++)
+						{	
+							if(AddAnotherFeeName[k].trim().equalsIgnoreCase(Excel_Handling.Get_Data(TC_ID, "FeeName").trim()))
+							{
+								Extent_Reporting.Log_Pass("Merged Record Found at "+j+ " Row", "Passeded");
+								Extent_Reporting.Log_report_img("record Found", "Passsed",driver);
+								FeeVal=true;
+								Assert.Clickbtn(driver, table_row_count+"["+j+"]/td["+i+"]//following::a[1]", "View Link");						
+								break;
+							}
+							if(AddAnotherFeeName.length==k)
+							{
+								Extent_Reporting.Log_Fail("Record does not exist", "Fail", driver);
+								break;
+							}
+						}	
+					}
+					if(FeeVal){
+						break;
+					}
+				}
+				if(headerPosition==i){
+					Extent_Reporting.Log_report_img("Respective Details", "Print", driver);
+					break;
+				}		
+				}		
+			}
+		 if(FeeVal){
+					String PaidUrl=driver.getCurrentUrl();
+		    		String str_to_found="pid=";
+		    		int pid_index=invoice_page_url.indexOf(str_to_found);
+		    		String roll_no=Assert.getInputTextValue(driver, invoice_roll_no, "Roll No");
+		    		roll_no=Assert.getInputTextValue(driver, invoice_roll_no, "Roll No");
+		    		String paid_pid_string=invoice_page_url.substring(pid_index+str_to_found.length(),invoice_page_url.length());		  
+		    		System.out.println(paid_pid_string);		    		
+		    		if(pid_string.equalsIgnoreCase(paid_pid_string))
+		    		{
+		    			Extent_Reporting.Log_Pass("Student fees paid", "Passed");
+		    			//driver.navigate().back();
+		    			Thread.sleep(2000);
+		    		}else{
+		    			Extent_Reporting.Log_Fail("Student pid is differen", "Failed", driver);
+		    		}
+		 		}			
+		 create_act.Login("School login UserName","School login PWD");
+    	 Thread.sleep(2000);				
+		 Assert.Clickbtn(driver, report_menu, "Report Menu");
+    	 Assert.Clickbtn(driver, student_report_sub_menu, "Student Report Sub Menu");
+    	 Assert.Clickbtn(driver, advance_search, "Advanced Search");
+    	 Assert.inputText(driver,roll_no_textbox , roll_no, "Roll No");
+    	 Assert.selectDropBoxValuebyVisibleTextwithoutClick(driver, PaytypeDropDown, "Paid", "Paid Transaction");
+    	 FileName= Excel_Handling.Get_Data(TC_ID, "CSVFileName").trim();  
+    	 File file = new File(OpenCSVReader.csvFile+FileName);         
+         if(file.delete()) 
+         { 
+             System.out.println("File deleted successfully"); 
+         } 
+    	 Assert.Clickbtn(driver, search_button, "Search on Admin invoice");   	
+    	 driver.findElement(By.xpath(ExcelPiadDownload)).click();
+    	 Thread.sleep(10000);
+    	 OpenCSVReader.cSVFileVerify(pid_string);	 
+   	 
      }
     	 
-    	 
-    	 
-    	 }
+   }
