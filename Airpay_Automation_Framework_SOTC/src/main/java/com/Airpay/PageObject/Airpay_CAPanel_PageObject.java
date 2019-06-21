@@ -34,6 +34,9 @@ public class Airpay_CAPanel_PageObject {
 			public static final String LastName = "//input[@id='paymentmaster-last_name']";
 			public static final String Email = "//input[@id='paymentmaster-email']";
 			public static final String PhoneNumber = "//input[@id='paymentmaster-phone']";
+
+			public static final String SinglepageAddress = "//input[@id='paymentmaster-address']";
+			
 			public static final String AmountField = "//input[@id='paymentmaster-amount']";
 
 			public static final String TotalErrorField = "(//div[contains(@class,'required has-error')]/*[contains(@name,'PaymentMaster')])";
@@ -44,7 +47,8 @@ public class Airpay_CAPanel_PageObject {
 			
 			public static final String CancelTransaction = "//div[@class='sorry sorrytransaction']";
 			public static final String SandboxModeMsg ="//div[@class='sandbox-msg']";
-			public static final String FailedTransactionErrMsg ="//div[@class='sorry sorrytransaction']/p";
+			public static final String FailedTransactionErrMsg ="(//div[@class='sorry sorrytransaction']/p) | (//div[@class='sorry']/p)";
+					//"//div[@class='sorry sorrytransaction']/p";
 
 			public static final String CreditCardNoInput ="(//div[@class='blockMain blockCards credit-tab']//following::input[contains(@class,'form-control cardNumber')])[1]";
 			public static final String CreditCardExpDate = "(//div[@class='blockMain blockCards credit-tab']//following::input[contains(@class,'form-control exp_date')])[1]";
@@ -148,6 +152,10 @@ public class Airpay_CAPanel_PageObject {
 			public static final String ManualTanishqBtn ="//*[@class='dropdown-toggle btn btn-primary md-btn']";
 			public static final String DownLoadManual ="//a[text()='Download Manual']";
 			public static final String ViewManual="//a[text()='View Manual']";
+			public static final String InvoiceMenu="//a[@href='/invoice/#']";
+			public static final String CreateInvoice="//a[@href='/invoice/create']";
+			
+			
 
 
 			

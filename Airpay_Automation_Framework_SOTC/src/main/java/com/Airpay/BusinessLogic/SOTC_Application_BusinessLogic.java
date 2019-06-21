@@ -839,7 +839,7 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 	
 	public void InvoiceSinglePage_Link() throws Exception{
 		try{
-
+			//Create invoicepay invoice use this function
 			String[] MA_URL = Excel_Handling.Get_Data(TC_ID, "CollectionURL").split(";");	
 			for(int URL=0;URL<MA_URL.length;URL++){	
 				System.out.println(MA_URL[URL]);
@@ -882,8 +882,11 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 				Assert.Verify_Image(driver, ImgLogo, "Airpay Logo");		
 				Assert.inputText(driver, FirstName, Excel_Handling.Get_Data(TC_ID, "First_Name").trim(), "First Name");
 				Assert.inputText(driver, LastName, Excel_Handling.Get_Data(TC_ID, "Last_Name").trim(), "Second Name");
-				Assert.inputText(driver, Email, Excel_Handling.Get_Data(TC_ID, "Email").trim(), "Email");
+ 				Assert.inputText(driver, Email, Excel_Handling.Get_Data(TC_ID, "Email").trim(), "Email");
 				Assert.inputText(driver, PhoneNumber, Excel_Handling.Get_Data(TC_ID, "PhoneNumber").trim(), "Phone Number");
+				Assert.inputText(driver, SinglepageAddress, Excel_Handling.Get_Data(TC_ID, "Address").trim(), "Address");
+				
+
 				String Value = driver.findElement(By.xpath(AmountField)).getAttribute("readonly");
 				System.out.println("Value Amount: "+Value);
 				if(Value==null){
@@ -1156,10 +1159,10 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 	public void DynamicSinglepage_field() throws Exception{
 		try{
 			if(Assert.isElementDisplay(driver, SubmitBtn))
-			{
+			{	Thread.sleep(2000);
 				Assert.Clickbtn(driver, SubmitBtn, "Submit Button");
 			}
-			Thread.sleep(2000);
+			Thread.sleep(600);
 			List<WebElement> tblHeaderCount = driver.findElements(By.xpath(SelectDropDown));
 			System.out.println("TotHeader: "+tblHeaderCount.size());			
 			for(int i=1;i<=tblHeaderCount.size();i++)
@@ -1211,10 +1214,13 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 	
 	public void sumbitBtn() throws Exception{
 		try{
-			if(Assert.isElementDisplay(driver, SubmitBtn)){
+			if(Assert.isElementDisplay(driver, SubmitBtn))
+			{
 				Assert.Clickbtn(driver, SubmitBtn, "Submit button");
 				Extent_Reporting.Log_Pass("Sumbit the single page", "passed");
-			}		
+				
+			}
+			
 		}catch(Exception e)	
 		{
 			Extent_Reporting.Log_Fail("Some fileds are missed to feed the data",	"Failed",driver);
@@ -1468,7 +1474,41 @@ public class SOTC_Application_BusinessLogic extends Airpay_CAPanel_PageObject {
 			throw new Exception("Tab does not exist");
 		}
 	}
-	
+	public void tanish_create_invoice() throws Exception{
+		try{
+		/*	//Create invoicepay invoice use this function
+			String[] MA_URL = Excel_Handling.Get_Data(TC_ID, "CollectionURL").split(";");	
+			for(int URL=0;URL<MA_URL.length;URL++){	
+				System.out.println(MA_URL[URL]);
+				Thread.sleep(2000);*/
+			
+	//			driver.get(MA_URL[URL]);
+				String title=   driver.getTitle();
+//				Extent_Reporting.Log_Pass("Link for: "+MA_URL[URL], "Passed");
+				Extent_Reporting.Log_Pass("Resoective Logo is exist for :"+title, "Passed");
+				InvoiceSinglePageConstant_Field();
+				//DynamicSinglepage_field();	
+				InvoiceCreateBtn();
+				InvoiceNavigatePage();
+				InvoiceSinglePageCrossVerifyData();
+				InvoiceTermsAndCondition_Field();
+				InvoiceTermsAndConditionChkPay_Field();
+				SinglePager_PaymentPage_BusinessLogic AirPay_Local = new SinglePager_PaymentPage_BusinessLogic(driver, TC_ID);
+				AirPay_Local.Card_Details_Options();
+				if(AirPay_Local.SandBoxMode("You are in Sandbox mode (Your account will not be charged)")==true)
+				{
+					Credit_cardProvidingValues();
+					AirPay_Local.InvoiceCash_paymentSuccessMesg();
+				}else{
+					AirPay_Local.FooterVerify();
+					AirPay_Local.InvoiceFailedTransaction();					
+				}
+		//	}
+		}catch(Exception t){
+			t.printStackTrace();
+			throw new Exception("SCOT panel page issue");
+		}
+	}
 
 
 }

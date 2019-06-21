@@ -46,12 +46,12 @@ public class Create_TestNGXML {
     public void createXMLfile () throws Exception {
 		
 		Runtime.getRuntime().exec(Constants.deleteAllTempFileBatchlocation);		
-		killProcessRunning("IEDriverServer.exe");
-		killProcessRunning("iexplore.exe *32");
-		killProcessRunning("iexplore.exe");
+		//killProcessRunning("IEDriverServer.exe");
+		//killProcessRunning("iexplore.exe *32");
+		//killProcessRunning("iexplore.exe");
 		killProcessRunning("ALM-Client.exe");
-		killProcessRunning("chromedriver.exe");	
-		killProcessRunning("chrome.exe");
+		//killProcessRunning("chromedriver.exe");	
+		//killProcessRunning("chrome.exe");
 		killProcessRunning("scalc.exe");	
     	//calling out the excel datasheet instance to get all the "Y" data for setting up the testngxml
 		// Excel sheet 1 st one.........................................	 		
